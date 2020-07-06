@@ -7,7 +7,6 @@ StrandedCellGeneration zero = new StrandedCellGeneration((width*16)/37, (height/
 StrandedCellAutomata SCA = new StrandedCellAutomata(zero);
 
 
-ButtCell button; //global variables
 
 
 void setup() {
@@ -26,12 +25,6 @@ void setup() {
   println("y = " + zero.yPos);
   
   
-
-  int buttonX = (33*width)/37;
-  int buttonY = (height/12);
-
-  int buttonSize = 180;
-
   
   //noLoop();
 
@@ -48,7 +41,7 @@ void draw() {
   {
     fill(220);
     noStroke();
-    rect(0,0, width, height);
+    rect(0,0, (width/2)-39, height);
     stroke(0);
     fill(255);
     SCA.clearNeeded = false;
