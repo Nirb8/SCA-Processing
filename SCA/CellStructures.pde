@@ -5,6 +5,9 @@ public class StrandedCellAutomata {
   LinkedList<StrandedCellGeneration> generationList;
   StrandedCellGeneration generation;
   boolean clearNeeded;
+  boolean timeVaryingEnabled;
+  LinkedList<Ruleset> timeRules;
+  int timeRuleIndex;
 
   StrandedCellAutomata(StrandedCellGeneration seed) {
     generationList = new LinkedList<StrandedCellGeneration>();
@@ -12,6 +15,8 @@ public class StrandedCellAutomata {
     currentGeneration = 0;
     generation = seed;
     clearNeeded = true;
+    timeVaryingEnabled = false;
+    timeRules = new LinkedList<Ruleset>();
   }
 
 
@@ -37,7 +42,14 @@ public class StrandedCellAutomata {
 
       tempParentCells.addLast(noStrandCell);
     }
+        if (timeVaryingEnabled) {
+        timeRuleIndex++; 
+        if (timeRuleIndex == timeRules.size()) {
+          timeRuleIndex = 0;
+        }
+      }
 
+     println("generated using ruleset at index " + timeRuleIndex);
     for (int i = 0; i<tempParentCells.size()-1; i++) {
       StrandedCell leftCell = tempParentCells.get(i);
       StrandedCell rightCell = tempParentCells.get(i+1);
@@ -45,10 +57,25 @@ public class StrandedCellAutomata {
       CellStatus rightStatus = rightCell.status;
       CellStatus newCellStatus = bitcodeToEnum(calcNextCell(enumToBitcode(leftStatus), enumToBitcode(rightStatus), leftCell.ruleset.turning, leftCell.ruleset.crossing));
 
-      StrandedCell newCell = new StrandedCell((i*parentGeneration.cellSize), newCellStatus, leftCell.ruleset);
+      Ruleset newRules = leftCell.ruleset;
+
+  
+
+       
+
+      if (timeVaryingEnabled && !timeRules.isEmpty()) {
+        newRules = timeRules.get(timeRuleIndex);
+      }
+
+      StrandedCell newCell = new StrandedCell((i*parentGeneration.cellSize), newCellStatus, newRules);
+
 
       nextCells.addLast(newCell);
     }
+
+
+
+
 
     currentGeneration++;
 
@@ -292,7 +319,7 @@ public class RuleDisplay {
     //draw active turning tab
     fill(255);
     //strokeWeight(5);
-    stroke(52,195,235);
+    stroke(52, 195, 235);
     beginShape();
     vertex(origCenterX, origCenterY);
     vertex(origCenterX + width/32, origCenterY - width/48);
@@ -452,7 +479,7 @@ public class RuleDisplay {
     //draw active crossing tab
     fill(255);
     //strokeWeight(5);
-    stroke(52,195,235);
+    stroke(52, 195, 235);
     beginShape();
     vertex(origCenterX, origCenterY);
     vertex(origCenterX + width/32, origCenterY - width/48);
@@ -466,8 +493,8 @@ public class RuleDisplay {
     textSize(20);
     text("Crossing: " + currentRuleset.crossingNum, origCenterX + width/32, origCenterY-width/128);
     fill(180);
-   // strokeWeight(2.5);
-  
+    // strokeWeight(2.5);
+
     //bit 0
     Point center = coordinateList.get(index);
     if (!currentRuleset.crossing[index]) {

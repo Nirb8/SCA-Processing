@@ -150,31 +150,25 @@ void mouseClicked() {
   for (int i = 0; i<9; i++) {
     Point pt = ruleGui.coordinateList.get(i);
     if (checkCellRegion(pt, ruleGui.cellSize)) {
-      int bitChange = 1;
-      for (int j = i; j>0; j--) {
-        bitChange *= 2;
-      }
       if (ruleGui.turningActive) { //TURNING RULE
 
         if (!ruleGui.currentRuleset.turning[i]) { //Selected bit is OFF and we toggle it ON
           ruleGui.currentRuleset.turning[i] = true;
           ruleGui.currentRuleset.updateNumbers();
-          
         } else {  //Selected bit is ON and we toggle it OFF
           ruleGui.currentRuleset.turning[i] = false;
           ruleGui.currentRuleset.updateNumbers();
         }
       } else { //CROSSING RULE
-        if(!ruleGui.currentRuleset.crossing[i]){  //Selected bit is OFF and we toggle it ON
+        if (!ruleGui.currentRuleset.crossing[i]) {  //Selected bit is OFF and we toggle it ON
           ruleGui.currentRuleset.crossing[i] = true;
           ruleGui.currentRuleset.updateNumbers();
-        }else{  //Selected bit is ON and we toggle it OFF
+        } else {  //Selected bit is ON and we toggle it OFF
           ruleGui.currentRuleset.crossing[i] = false;
           ruleGui.currentRuleset.updateNumbers();
         }
-        
       }
-      ruleGui.currentRuleset.printRules();
+      //ruleGui.currentRuleset.printRules();
     }
   }
 }
@@ -201,12 +195,42 @@ void keyPressed() {
   //  }
   //  ruleGui.currentRuleset.printRules();
   //}
-  if(key == 'l'){
-     zero.updateCellRulesets(ruleGui.currentRuleset); 
+  if (key == 'l') {
+    Ruleset updatedRuleset = new Ruleset(ruleGui.currentRuleset.turningNum, ruleGui.currentRuleset.crossingNum);
+    
+    if(!SCA.timeVaryingEnabled)
+    zero.updateCellRulesets(updatedRuleset);
+    else
+    {
+      
+      SCA.timeRules.addLast(updatedRuleset);
+      zero.updateCellRulesets(SCA.timeRules.get(0));
+    }
   }
 
   if (key == 'm') {
     ruleGui.turningActive = !ruleGui.turningActive;
+  }
+  if (key == 't') {
+    SCA.timeVaryingEnabled = !SCA.timeVaryingEnabled;
+
+    if (SCA.timeVaryingEnabled) {
+      println("Time Varying Rulesets Enabled");
+      SCA.timeRuleIndex = 0;
+      SCA.timeRules = new LinkedList<Ruleset>();
+    } else {
+      println("Time Varying Rulesets Disabled");
+      SCA.timeRuleIndex = 0;
+      SCA.timeRules = new LinkedList<Ruleset>();
+    }
+  }
+  
+  if(key == 'q' && !SCA.timeRules.isEmpty()){
+     print("\nCurrent Time-Varying Rules: ");
+      for(int i = 0; i<SCA.timeRules.size();i++){
+       print(" (" + SCA.timeRules.get(i).turningNum + ", " + SCA.timeRules.get(i).crossingNum + "), ");
+     }
+     println("");
   }
 }
 
