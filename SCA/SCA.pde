@@ -201,6 +201,9 @@ void keyPressed() {
   //  }
   //  ruleGui.currentRuleset.printRules();
   //}
+  if(key == 'l'){
+     zero.updateCellRulesets(ruleGui.currentRuleset); 
+  }
 
   if (key == 'm') {
     ruleGui.turningActive = !ruleGui.turningActive;

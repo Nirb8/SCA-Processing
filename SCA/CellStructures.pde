@@ -95,6 +95,12 @@ public class StrandedCellGeneration {
       println(c.status + ", ");
     }
   }
+  
+  public void updateCellRulesets(Ruleset r){
+   for(StrandedCell c : cells){
+    c.ruleset = r; 
+   }
+  }
 
   public void drawGeneration() {
     for (StrandedCell c : cells) {
