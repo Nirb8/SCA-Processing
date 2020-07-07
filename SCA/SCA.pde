@@ -147,7 +147,7 @@ void mouseClicked() {
 
   //"buttons" for rule manipulation
 
-  for (int i = 0; i<8; i++) {
+  for (int i = 0; i<9; i++) {
     Point pt = ruleGui.coordinateList.get(i);
     if (checkCellRegion(pt, ruleGui.cellSize)) {
       int bitChange = 1;

@@ -95,11 +95,11 @@ public class StrandedCellGeneration {
       println(c.status + ", ");
     }
   }
-  
-  public void updateCellRulesets(Ruleset r){
-   for(StrandedCell c : cells){
-    c.ruleset = r; 
-   }
+
+  public void updateCellRulesets(Ruleset r) {
+    for (StrandedCell c : cells) {
+      c.ruleset = r;
+    }
   }
 
   public void drawGeneration() {
@@ -178,8 +178,8 @@ public class Ruleset {
   }
 
   public void setRules(int turningRule, int crossingRule) {
-    
-    
+
+
     String binaryTurning = Integer.toBinaryString(turningRule);
     //println(binaryTurning);
     String binaryCrossing = Integer.toBinaryString(crossingRule);
@@ -226,29 +226,29 @@ public class Ruleset {
 
     return crossing[bitNumber];
   }
-  
-  public void updateNumbers(){
-    
+
+  public void updateNumbers() {
+
     //convert turning rule boolean array into binary string
-    
+
     String turningBinaryString = "";
-    for(int i = 0; i < turning.length;i++){
-     if(turning[i])
-       turningBinaryString = "1" + turningBinaryString;
-       else
-       turningBinaryString = "0" + turningBinaryString;
+    for (int i = 0; i < turning.length; i++) {
+      if (turning[i])
+        turningBinaryString = "1" + turningBinaryString;
+      else
+        turningBinaryString = "0" + turningBinaryString;
     }
-    
+
     turningNum = Integer.parseInt(turningBinaryString, 2);
-    
+
     String crossingBinaryString = "";
-    for(int i = 0; i < crossing.length;i++){
-      if(crossing[i])
+    for (int i = 0; i < crossing.length; i++) {
+      if (crossing[i])
         crossingBinaryString = "1" + crossingBinaryString;
-        else
+      else
         crossingBinaryString = "0" + crossingBinaryString;
     }
-    
+
     crossingNum = Integer.parseInt(crossingBinaryString, 2);
   }
 }
@@ -272,7 +272,7 @@ public class RuleDisplay {
   Ruleset currentRuleset;
   boolean turningActive;
   int cellSize;
-  
+
 
   RuleDisplay() {
     currentRuleset = new Ruleset();
@@ -286,6 +286,46 @@ public class RuleDisplay {
   public void drawTurningDisplay() {
     int index = 0;
 
+    int origCenterX = coordinateList.get(8).x - width/18;
+    int origCenterY = coordinateList.get(8).y - height/12;
+
+    //draw active turning tab
+    fill(255);
+    //strokeWeight(5);
+    stroke(52,195,235);
+    beginShape();
+    vertex(origCenterX, origCenterY);
+    vertex(origCenterX + width/32, origCenterY - width/48);
+    vertex(origCenterX + width/32 + width/16, origCenterY - width/48);
+    vertex(origCenterX + width/8, origCenterY);
+    endShape(CLOSE);
+    stroke(0);
+    fill(180);
+
+    fill(0);
+    textSize(20);
+    text("Turning: " + currentRuleset.turningNum, origCenterX + width/32, origCenterY-width/128);
+    fill(180);
+    //strokeWeight(2.5);
+
+    origCenterX += width/8;
+
+    //draw inactive crossing tab
+    fill(220);
+    beginShape();
+    vertex(origCenterX, origCenterY);
+    vertex(origCenterX + width/32, origCenterY - width/48);
+    vertex(origCenterX + width/32 + width/16, origCenterY - width/48);
+    vertex(origCenterX + width/8, origCenterY);
+    endShape(CLOSE);
+    fill(180);
+
+    fill(0);
+    textSize(20);
+    text("Crossing: " + currentRuleset.crossingNum, origCenterX + width/32, origCenterY-width/128);
+    fill(180);
+
+
     //bit 0
     Point center = coordinateList.get(index);
     if (!currentRuleset.turning[index]) {
@@ -296,7 +336,7 @@ public class RuleDisplay {
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.straightRight, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.straightLeft, cellSize); //draw right neighbor
     index++;
-    
+
     //bit 1
     center = coordinateList.get(index);
     if (!currentRuleset.turning[index]) {
@@ -307,7 +347,7 @@ public class RuleDisplay {
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.straightRight, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.noStrand, cellSize); //draw right neighbor
     index++;
-    
+
     //bit 2
     center = coordinateList.get(index);
     if (!currentRuleset.turning[index]) {
@@ -318,7 +358,7 @@ public class RuleDisplay {
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.straightRight, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.leftwardSlant, cellSize); //draw right neighbor
     index++;
-    
+
     //bit 3
     center = coordinateList.get(index);
     if (!currentRuleset.turning[index]) {
@@ -329,7 +369,7 @@ public class RuleDisplay {
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.noStrand, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.straightLeft, cellSize); //draw right neighbor
     index++;
-    
+
     //bit 4
     center = coordinateList.get(index);
     if (!currentRuleset.turning[index]) {
@@ -340,7 +380,7 @@ public class RuleDisplay {
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.noStrand, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.noStrand, cellSize); //draw right neighbor
     index++;
-    
+
     //bit 5
     center = coordinateList.get(index);
     if (!currentRuleset.turning[index]) {
@@ -351,7 +391,7 @@ public class RuleDisplay {
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.noStrand, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.leftwardSlant, cellSize); //draw right neighbor
     index++;
-    
+
     //bit 6
     center = coordinateList.get(index);
     if (!currentRuleset.turning[index]) {
@@ -362,7 +402,7 @@ public class RuleDisplay {
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.rightwardSlant, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.straightLeft, cellSize); //draw right neighbor
     index++;
-    
+
     //bit 7
     center = coordinateList.get(index);
     if (!currentRuleset.turning[index]) {
@@ -373,7 +413,7 @@ public class RuleDisplay {
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.rightwardSlant, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.noStrand, cellSize); //draw right neighbor
     index++;
-    
+
     //bit 8
     center = coordinateList.get(index);
     if (!currentRuleset.turning[index]) {
@@ -383,15 +423,51 @@ public class RuleDisplay {
     }
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.rightwardSlant, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.leftwardSlant, cellSize); //draw right neighbor
-    
-    
-    
   }
 
   public void drawCrossingDisplay() {
-    
+
     int index = 0;
 
+    int origCenterX = coordinateList.get(8).x - width/18;
+    int origCenterY = coordinateList.get(8).y - height/12;
+
+    //draw inactive turning tab
+    fill(220);
+    beginShape();
+    vertex(origCenterX, origCenterY);
+    vertex(origCenterX + width/32, origCenterY - width/48);
+    vertex(origCenterX + width/32 + width/16, origCenterY - width/48);
+    vertex(origCenterX + width/8, origCenterY);
+    endShape(CLOSE);
+    fill(180);
+
+    fill(0);
+    textSize(20);
+    text("Turning: " + currentRuleset.turningNum, origCenterX + width/32, origCenterY-width/128);
+    fill(180);
+
+    origCenterX += width/8;
+
+    //draw active crossing tab
+    fill(255);
+    //strokeWeight(5);
+    stroke(52,195,235);
+    beginShape();
+    vertex(origCenterX, origCenterY);
+    vertex(origCenterX + width/32, origCenterY - width/48);
+    vertex(origCenterX + width/32 + width/16, origCenterY - width/48);
+    vertex(origCenterX + width/8, origCenterY);
+    endShape(CLOSE);
+    stroke(0);
+    fill(180);
+
+    fill(0);
+    textSize(20);
+    text("Crossing: " + currentRuleset.crossingNum, origCenterX + width/32, origCenterY-width/128);
+    fill(180);
+   // strokeWeight(2.5);
+  
     //bit 0
     Point center = coordinateList.get(index);
     if (!currentRuleset.crossing[index]) {
@@ -402,7 +478,7 @@ public class RuleDisplay {
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.sCross, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.zCross, cellSize); //draw right neighbor
     index++;
-    
+
     //bit 1
     center = coordinateList.get(index);
     if (!currentRuleset.crossing[index]) {
@@ -413,7 +489,7 @@ public class RuleDisplay {
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.sCross, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.leftwardSlant, cellSize); //draw right neighbor
     index++;
-    
+
     //bit 2
     center = coordinateList.get(index);
     if (!currentRuleset.crossing[index]) {
@@ -424,7 +500,7 @@ public class RuleDisplay {
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.sCross, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.sCross, cellSize); //draw right neighbor
     index++;
-    
+
     //bit 3
     center = coordinateList.get(index);
     if (!currentRuleset.crossing[index]) {
@@ -435,7 +511,7 @@ public class RuleDisplay {
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.rightwardSlant, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.zCross, cellSize); //draw right neighbor
     index++;
-    
+
     //bit 4
     center = coordinateList.get(index);
     if (!currentRuleset.crossing[index]) {
@@ -446,7 +522,7 @@ public class RuleDisplay {
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.rightwardSlant, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.leftwardSlant, cellSize); //draw right neighbor
     index++;
-    
+
     //bit 5
     center = coordinateList.get(index);
     if (!currentRuleset.crossing[index]) {
@@ -457,7 +533,7 @@ public class RuleDisplay {
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.rightwardSlant, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.sCross, cellSize); //draw right neighbor
     index++;
-    
+
     //bit 6
     center = coordinateList.get(index);
     if (!currentRuleset.crossing[index]) {
@@ -468,7 +544,7 @@ public class RuleDisplay {
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.zCross, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.zCross, cellSize); //draw right neighbor
     index++;
-    
+
     //bit 7
     center = coordinateList.get(index);
     if (!currentRuleset.crossing[index]) {
@@ -479,7 +555,7 @@ public class RuleDisplay {
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.zCross, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.leftwardSlant, cellSize); //draw right neighbor
     index++;
-    
+
     //bit 8
     center = coordinateList.get(index);
     if (!currentRuleset.crossing[index]) {
@@ -489,9 +565,6 @@ public class RuleDisplay {
     }
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.zCross, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.sCross, cellSize); //draw right neighbor
-    
-    
-    
   }
   public void debugCoords() {
     for (int i = 0; i<coordinateList.size(); i++) {
