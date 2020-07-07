@@ -221,3 +221,42 @@ public class Ruleset {
     return crossing[bitNumber];
   }
 }
+
+public class Point{
+   int x;
+   int y;
+   public Point(int x, int y){
+    this.x = x;
+    this.y = y;
+   }
+}
+
+/**
+*
+*  Rule picker GUI object
+*
+*/
+public class RuleDisplay{
+  LinkedList<Point> coordinateList;
+  Ruleset currentRuleset;
+  
+  RuleDisplay(){
+    currentRuleset = new Ruleset();
+    currentRuleset.setRules(0,0);
+    
+    coordinateList = new LinkedList<Point>();
+  }
+  
+  public void drawTurningDisplay(){
+    
+  }
+  
+  public void drawCrossingDisplay(){
+    
+  }
+  public void debugCoords(){
+   for(int i = 0;i<coordinateList.size();i++){
+    println(i + ":  (" + coordinateList.get(i).x + ", " + coordinateList.get(i).y+ ")");
+   }
+  }
+}
