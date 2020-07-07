@@ -172,6 +172,8 @@ public class Ruleset {
   }
 
   public void setRules(int turningRule, int crossingRule) {
+    
+    
     String binaryTurning = Integer.toBinaryString(turningRule);
     //println(binaryTurning);
     String binaryCrossing = Integer.toBinaryString(crossingRule);
@@ -217,6 +219,31 @@ public class Ruleset {
       return false;
 
     return crossing[bitNumber];
+  }
+  
+  public void updateNumbers(){
+    
+    //convert turning rule boolean array into binary string
+    
+    String turningBinaryString = "";
+    for(int i = 0; i < turning.length;i++){
+     if(turning[i])
+       turningBinaryString = "1" + turningBinaryString;
+       else
+       turningBinaryString = "0" + turningBinaryString;
+    }
+    
+    turningNum = Integer.parseInt(turningBinaryString, 2);
+    
+    String crossingBinaryString = "";
+    for(int i = 0; i < crossing.length;i++){
+      if(crossing[i])
+        crossingBinaryString = "1" + crossingBinaryString;
+        else
+        crossingBinaryString = "0" + crossingBinaryString;
+    }
+    
+    crossingNum = Integer.parseInt(crossingBinaryString, 2);
   }
 }
 

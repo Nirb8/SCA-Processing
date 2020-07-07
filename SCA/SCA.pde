@@ -111,11 +111,9 @@ void draw() {
 
 
 
-  ruleGui.currentRuleset.setRules(ruleTester, ruleTester);
-
-  if(ruleGui.turningActive){
+  if (ruleGui.turningActive) {
     ruleGui.drawTurningDisplay();
-  }else{
+  } else {
     ruleGui.drawCrossingDisplay();
   }
 
@@ -146,6 +144,39 @@ void mouseClicked() {
       }
     }
   }
+
+  //"buttons" for rule manipulation
+
+  for (int i = 0; i<8; i++) {
+    Point pt = ruleGui.coordinateList.get(i);
+    if (checkCellRegion(pt, ruleGui.cellSize)) {
+      int bitChange = 1;
+      for (int j = i; j>0; j--) {
+        bitChange *= 2;
+      }
+      if (ruleGui.turningActive) { //TURNING RULE
+
+        if (!ruleGui.currentRuleset.turning[i]) { //Selected bit is OFF and we toggle it ON
+          ruleGui.currentRuleset.turning[i] = true;
+          ruleGui.currentRuleset.updateNumbers();
+          
+        } else {  //Selected bit is ON and we toggle it OFF
+          ruleGui.currentRuleset.turning[i] = false;
+          ruleGui.currentRuleset.updateNumbers();
+        }
+      } else { //CROSSING RULE
+        if(!ruleGui.currentRuleset.crossing[i]){  //Selected bit is OFF and we toggle it ON
+          ruleGui.currentRuleset.crossing[i] = true;
+          ruleGui.currentRuleset.updateNumbers();
+        }else{  //Selected bit is ON and we toggle it OFF
+          ruleGui.currentRuleset.crossing[i] = false;
+          ruleGui.currentRuleset.updateNumbers();
+        }
+        
+      }
+      ruleGui.currentRuleset.printRules();
+    }
+  }
 }
 
 void keyPressed() {
@@ -155,26 +186,24 @@ void keyPressed() {
 
   if (key == 'p') {
     //SCA.pollGenerations();
+    ruleGui.currentRuleset.printRules();
   }
 
   if (key == 'r') {
     SCA = new StrandedCellAutomata(zero);
   }
 
-  if (key == 'n') {
-    ruleTester++;
-    println(ruleTester);
-    if (ruleTester==512) {
-      ruleTester = 0;
-    }
-    ruleGui.currentRuleset.printRules();
-  }
-  
-  if(key == 'm'){
-   ruleGui.turningActive = !ruleGui.turningActive; 
-  }
-  if(key == 'b'){
-    ruleTester = 469;
+  //if (key == 'n') {
+  //  ruleTester++;
+  //  println(ruleTester);
+  //  if (ruleTester==512) {
+  //    ruleTester = 0;
+  //  }
+  //  ruleGui.currentRuleset.printRules();
+  //}
+
+  if (key == 'm') {
+    ruleGui.turningActive = !ruleGui.turningActive;
   }
 }
 
@@ -473,4 +502,16 @@ public CellStatus bitcodeToEnum(String bitcode) {
   }
 
   return status;
+}
+/**
+ *
+ *  Method to check a square region down and to the right of the given point has the mouse pointer contained inside it
+ *
+ */
+public boolean checkCellRegion(Point p, int cellSize) {
+
+  if (mouseX > p.x && mouseX < p.x + cellSize)
+    if (mouseY > p.y && mouseY < p.y + cellSize)
+      return true;
+  return false;
 }
