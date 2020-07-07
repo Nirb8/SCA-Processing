@@ -32,6 +32,8 @@ void setup() {
   // Ruleset testingSet = new Ruleset(324, 6);
   //println(calcNextCell("33","30", testingSet.turning, testingSet.crossing));
 
+  ruleGui.cellSize = width/24;
+
   int centerX = 7*width/12;
 
   int centerY = height/6;
@@ -48,7 +50,7 @@ void setup() {
   int origX = centerX;
   int origY = centerY;
 
-int count = 8;
+  int count = 8;
   for (int i = 0; i<3; i++) {
     for (int j = 0; j<3; j++)
     {
@@ -64,31 +66,30 @@ int count = 8;
   }
   centerY = origY;
 
-//ruleGui.debugCoords();
+  //ruleGui.debugCoords();
 
 
-//bit 8
-//drawStrands(centerX, centerY, CellStatus.noStrand, width/24);
-//drawStrands(centerX - width/48, centerY + width/24, CellStatus.noStrand, width/24);
-//drawStrands(centerX + width/48, centerY + width/24, CellStatus.noStrand, width/24);
+  //bit 8
+  //drawStrands(centerX, centerY, CellStatus.noStrand, width/24);
+  //drawStrands(centerX - width/48, centerY + width/24, CellStatus.noStrand, width/24);
+  //drawStrands(centerX + width/48, centerY + width/24, CellStatus.noStrand, width/24);
 
-//centerX = centerX + (width/12) + (width/36);
-
-
+  //centerX = centerX + (width/12) + (width/36);
 
 
-//  centerX = centerX + (width/12) + (width/36);
-//  centerY = centerY + (width/12) + (width/36);
 
 
-//  drawStrands(centerX, centerY, CellStatus.noStrand, width/24);
+  //  centerX = centerX + (width/12) + (width/36);
+  //  centerY = centerY + (width/12) + (width/36);
 
-//  centerX = centerX + (width/12) + (width/36);
 
-//  drawStrands(centerX, centerY, CellStatus.noStrand, width/24);
+  //  drawStrands(centerX, centerY, CellStatus.noStrand, width/24);
 
+  //  centerX = centerX + (width/12) + (width/36);
+
+  //  drawStrands(centerX, centerY, CellStatus.noStrand, width/24);
 }
-
+int ruleTester = 0;
 
 void draw() {
 
@@ -102,10 +103,21 @@ void draw() {
     SCA.clearNeeded = false;
   }
 
-  int centerX = 7*width/12;
+  //int centerX = 7*width/12;
 
-  int centerY = height/6;
+  //int centerY = height/6;
 
+  //ruleGui.drawTurningDisplay();
+
+
+
+  ruleGui.currentRuleset.setRules(ruleTester, ruleTester);
+
+  if(ruleGui.turningActive){
+    ruleGui.drawTurningDisplay();
+  }else{
+    ruleGui.drawCrossingDisplay();
+  }
 
   for (StrandedCellGeneration g : SCA.generationList) {
     g.drawGeneration();
@@ -114,15 +126,23 @@ void draw() {
 
 void mouseClicked() {
 
-
+  //"buttons" for manipulating zeroth generation
   if (mouseY >= zero.yPos && mouseY <= zero.yPos + zero.cellSize) {
     for (int i = 0; i<zero.cells.size()-1; i++) {
       int leftCellBoundary = zero.xPos + zero.cells.get(i).deltaX;
       int rightCellBoundary = leftCellBoundary + zero.cellSize;
 
-      if (mouseX > leftCellBoundary && mouseX < rightCellBoundary) {
+      if (mouseX > leftCellBoundary && mouseX < rightCellBoundary && mouseButton == LEFT) {
         zero.cells.get(i).cycleStatus();
-        //redraw();
+      } else {
+        if (mouseX > leftCellBoundary && mouseX < rightCellBoundary && mouseButton == RIGHT) {
+          for (int j = 0; j<7; j++)
+            zero.cells.get(i).cycleStatus();
+        } else {
+          if (mouseX > leftCellBoundary && mouseX < rightCellBoundary && mouseButton == CENTER) {
+            zero.cells.get(i).status = CellStatus.noStrand;
+          }
+        }
       }
     }
   }
@@ -139,6 +159,22 @@ void keyPressed() {
 
   if (key == 'r') {
     SCA = new StrandedCellAutomata(zero);
+  }
+
+  if (key == 'n') {
+    ruleTester++;
+    println(ruleTester);
+    if (ruleTester==512) {
+      ruleTester = 0;
+    }
+    ruleGui.currentRuleset.printRules();
+  }
+  
+  if(key == 'm'){
+   ruleGui.turningActive = !ruleGui.turningActive; 
+  }
+  if(key == 'b'){
+    ruleTester = 469;
   }
 }
 

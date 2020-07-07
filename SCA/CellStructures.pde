@@ -32,9 +32,9 @@ public class StrandedCellAutomata {
       shiftFactor *= -1;
       tempParentCells.addFirst(noStrandCell);
     } else {
-      
+
       StrandedCell noStrandCell = new StrandedCell(0, CellStatus.noStrand, tempParentCells.getLast().ruleset);
-      
+
       tempParentCells.addLast(noStrandCell);
     }
 
@@ -44,11 +44,11 @@ public class StrandedCellAutomata {
       CellStatus leftStatus = leftCell.status;
       CellStatus rightStatus = rightCell.status;
       CellStatus newCellStatus = bitcodeToEnum(calcNextCell(enumToBitcode(leftStatus), enumToBitcode(rightStatus), leftCell.ruleset.turning, leftCell.ruleset.crossing));
-      
+
       StrandedCell newCell = new StrandedCell((i*parentGeneration.cellSize), newCellStatus, leftCell.ruleset);
-      
+
       nextCells.addLast(newCell);
-}
+    }
 
     currentGeneration++;
 
@@ -75,7 +75,7 @@ public class StrandedCellGeneration {
     cells = new LinkedList<StrandedCell>();
     generationNumber = 0;
 
-   // cells.add(new StrandedCell(0, CellStatus.zCross, new Ruleset(324, 6)));
+    // cells.add(new StrandedCell(0, CellStatus.zCross, new Ruleset(324, 6)));
     for (int i = 0; i<numCells; i++) {
       cells.add(new StrandedCell(i*cellSize, CellStatus.noStrand, new Ruleset(324, 140)));
     }
@@ -120,7 +120,7 @@ public class StrandedCell {
     //if(status != CellStatus.noStrand)
     drawStrands(x + deltaX, y, this.status, this.size);
   }
-  
+
   public void cycleStatus() {
     switch(status) {
 
@@ -148,9 +148,7 @@ public class StrandedCell {
     case sCross:
       status = CellStatus.noStrand;//set the status to noStrand
       break;
-    } 
-
-    
+    }
   }
 }
 
@@ -222,41 +220,249 @@ public class Ruleset {
   }
 }
 
-public class Point{
-   int x;
-   int y;
-   public Point(int x, int y){
+public class Point {
+  int x;
+  int y;
+  public Point(int x, int y) {
     this.x = x;
     this.y = y;
-   }
+  }
 }
 
 /**
-*
-*  Rule picker GUI object
-*
-*/
-public class RuleDisplay{
+ *
+ *  Rule picker GUI object
+ *
+ */
+public class RuleDisplay {
   LinkedList<Point> coordinateList;
   Ruleset currentRuleset;
+  boolean turningActive;
+  int cellSize;
   
-  RuleDisplay(){
+
+  RuleDisplay() {
     currentRuleset = new Ruleset();
-    currentRuleset.setRules(0,0);
-    
+    currentRuleset.setRules(0, 0);
+
+    turningActive = true;
+    cellSize = SIZE_CONSTANT;
     coordinateList = new LinkedList<Point>();
   }
-  
-  public void drawTurningDisplay(){
+  //This method draws an active turning tab along with the sample cells
+  public void drawTurningDisplay() {
+    int index = 0;
+
+    //bit 0
+    Point center = coordinateList.get(index);
+    if (!currentRuleset.turning[index]) {
+      drawStrands(center.x, center.y, CellStatus.leftRight, cellSize);
+    } else {
+      drawStrands(center.x, center.y, CellStatus.sCross, cellSize);
+    }
+    drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.straightRight, cellSize); //draw left neighbor
+    drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.straightLeft, cellSize); //draw right neighbor
+    index++;
+    
+    //bit 1
+    center = coordinateList.get(index);
+    if (!currentRuleset.turning[index]) {
+      drawStrands(center.x, center.y, CellStatus.straightLeft, cellSize);
+    } else {
+      drawStrands(center.x, center.y, CellStatus.rightwardSlant, cellSize);
+    }
+    drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.straightRight, cellSize); //draw left neighbor
+    drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.noStrand, cellSize); //draw right neighbor
+    index++;
+    
+    //bit 2
+    center = coordinateList.get(index);
+    if (!currentRuleset.turning[index]) {
+      drawStrands(center.x, center.y, CellStatus.leftRight, cellSize);
+    } else {
+      drawStrands(center.x, center.y, CellStatus.sCross, cellSize);
+    }
+    drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.straightRight, cellSize); //draw left neighbor
+    drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.leftwardSlant, cellSize); //draw right neighbor
+    index++;
+    
+    //bit 3
+    center = coordinateList.get(index);
+    if (!currentRuleset.turning[index]) {
+      drawStrands(center.x, center.y, CellStatus.straightRight, cellSize);
+    } else {
+      drawStrands(center.x, center.y, CellStatus.leftwardSlant, cellSize);
+    }
+    drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.noStrand, cellSize); //draw left neighbor
+    drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.straightLeft, cellSize); //draw right neighbor
+    index++;
+    
+    //bit 4
+    center = coordinateList.get(index);
+    if (!currentRuleset.turning[index]) {
+      drawStrands(center.x, center.y, CellStatus.noStrand, cellSize);
+    } else {
+      drawStrands(center.x, center.y, CellStatus.noStrand, cellSize);
+    }
+    drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.noStrand, cellSize); //draw left neighbor
+    drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.noStrand, cellSize); //draw right neighbor
+    index++;
+    
+    //bit 5
+    center = coordinateList.get(index);
+    if (!currentRuleset.turning[index]) {
+      drawStrands(center.x, center.y, CellStatus.straightRight, cellSize);
+    } else {
+      drawStrands(center.x, center.y, CellStatus.leftwardSlant, cellSize);
+    }
+    drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.noStrand, cellSize); //draw left neighbor
+    drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.leftwardSlant, cellSize); //draw right neighbor
+    index++;
+    
+    //bit 6
+    center = coordinateList.get(index);
+    if (!currentRuleset.turning[index]) {
+      drawStrands(center.x, center.y, CellStatus.leftRight, cellSize);
+    } else {
+      drawStrands(center.x, center.y, CellStatus.sCross, cellSize);
+    }
+    drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.rightwardSlant, cellSize); //draw left neighbor
+    drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.straightLeft, cellSize); //draw right neighbor
+    index++;
+    
+    //bit 7
+    center = coordinateList.get(index);
+    if (!currentRuleset.turning[index]) {
+      drawStrands(center.x, center.y, CellStatus.straightLeft, cellSize);
+    } else {
+      drawStrands(center.x, center.y, CellStatus.rightwardSlant, cellSize);
+    }
+    drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.rightwardSlant, cellSize); //draw left neighbor
+    drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.noStrand, cellSize); //draw right neighbor
+    index++;
+    
+    //bit 8
+    center = coordinateList.get(index);
+    if (!currentRuleset.turning[index]) {
+      drawStrands(center.x, center.y, CellStatus.leftRight, cellSize);
+    } else {
+      drawStrands(center.x, center.y, CellStatus.sCross, cellSize);
+    }
+    drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.rightwardSlant, cellSize); //draw left neighbor
+    drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.leftwardSlant, cellSize); //draw right neighbor
+    
+    
     
   }
-  
-  public void drawCrossingDisplay(){
+
+  public void drawCrossingDisplay() {
+    
+    int index = 0;
+
+    //bit 0
+    Point center = coordinateList.get(index);
+    if (!currentRuleset.crossing[index]) {
+      drawStrands(center.x, center.y, CellStatus.sCross, cellSize);
+    } else {
+      drawStrands(center.x, center.y, CellStatus.zCross, cellSize);
+    }
+    drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.sCross, cellSize); //draw left neighbor
+    drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.zCross, cellSize); //draw right neighbor
+    index++;
+    
+    //bit 1
+    center = coordinateList.get(index);
+    if (!currentRuleset.crossing[index]) {
+      drawStrands(center.x, center.y, CellStatus.sCross, cellSize);
+    } else {
+      drawStrands(center.x, center.y, CellStatus.zCross, cellSize);
+    }
+    drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.sCross, cellSize); //draw left neighbor
+    drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.leftwardSlant, cellSize); //draw right neighbor
+    index++;
+    
+    //bit 2
+    center = coordinateList.get(index);
+    if (!currentRuleset.crossing[index]) {
+      drawStrands(center.x, center.y, CellStatus.sCross, cellSize);
+    } else {
+      drawStrands(center.x, center.y, CellStatus.zCross, cellSize);
+    }
+    drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.sCross, cellSize); //draw left neighbor
+    drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.sCross, cellSize); //draw right neighbor
+    index++;
+    
+    //bit 3
+    center = coordinateList.get(index);
+    if (!currentRuleset.crossing[index]) {
+      drawStrands(center.x, center.y, CellStatus.sCross, cellSize);
+    } else {
+      drawStrands(center.x, center.y, CellStatus.zCross, cellSize);
+    }
+    drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.rightwardSlant, cellSize); //draw left neighbor
+    drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.zCross, cellSize); //draw right neighbor
+    index++;
+    
+    //bit 4
+    center = coordinateList.get(index);
+    if (!currentRuleset.crossing[index]) {
+      drawStrands(center.x, center.y, CellStatus.sCross, cellSize);
+    } else {
+      drawStrands(center.x, center.y, CellStatus.zCross, cellSize);
+    }
+    drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.rightwardSlant, cellSize); //draw left neighbor
+    drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.leftwardSlant, cellSize); //draw right neighbor
+    index++;
+    
+    //bit 5
+    center = coordinateList.get(index);
+    if (!currentRuleset.crossing[index]) {
+      drawStrands(center.x, center.y, CellStatus.sCross, cellSize);
+    } else {
+      drawStrands(center.x, center.y, CellStatus.zCross, cellSize);
+    }
+    drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.rightwardSlant, cellSize); //draw left neighbor
+    drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.sCross, cellSize); //draw right neighbor
+    index++;
+    
+    //bit 6
+    center = coordinateList.get(index);
+    if (!currentRuleset.crossing[index]) {
+      drawStrands(center.x, center.y, CellStatus.sCross, cellSize);
+    } else {
+      drawStrands(center.x, center.y, CellStatus.zCross, cellSize);
+    }
+    drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.zCross, cellSize); //draw left neighbor
+    drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.zCross, cellSize); //draw right neighbor
+    index++;
+    
+    //bit 7
+    center = coordinateList.get(index);
+    if (!currentRuleset.crossing[index]) {
+      drawStrands(center.x, center.y, CellStatus.sCross, cellSize);
+    } else {
+      drawStrands(center.x, center.y, CellStatus.zCross, cellSize);
+    }
+    drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.zCross, cellSize); //draw left neighbor
+    drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.leftwardSlant, cellSize); //draw right neighbor
+    index++;
+    
+    //bit 8
+    center = coordinateList.get(index);
+    if (!currentRuleset.crossing[index]) {
+      drawStrands(center.x, center.y, CellStatus.sCross, cellSize);
+    } else {
+      drawStrands(center.x, center.y, CellStatus.zCross, cellSize);
+    }
+    drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.zCross, cellSize); //draw left neighbor
+    drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.sCross, cellSize); //draw right neighbor
+    
+    
     
   }
-  public void debugCoords(){
-   for(int i = 0;i<coordinateList.size();i++){
-    println(i + ":  (" + coordinateList.get(i).x + ", " + coordinateList.get(i).y+ ")");
-   }
+  public void debugCoords() {
+    for (int i = 0; i<coordinateList.size(); i++) {
+      println(i + ":  (" + coordinateList.get(i).x + ", " + coordinateList.get(i).y+ ")");
+    }
   }
 }
