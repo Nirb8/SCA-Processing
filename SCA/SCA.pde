@@ -197,12 +197,12 @@ void keyPressed() {
   //}
   if (key == 'l') {
     Ruleset updatedRuleset = new Ruleset(ruleGui.currentRuleset.turningNum, ruleGui.currentRuleset.crossingNum);
-    
-    if(!SCA.timeVaryingEnabled)
-    zero.updateCellRulesets(updatedRuleset);
+
+    if (!SCA.timeVaryingEnabled)
+      zero.updateCellRulesets(updatedRuleset);
     else
     {
-      
+
       SCA.timeRules.addLast(updatedRuleset);
       zero.updateCellRulesets(SCA.timeRules.get(0));
     }
@@ -224,13 +224,13 @@ void keyPressed() {
       SCA.timeRules = new LinkedList<Ruleset>();
     }
   }
-  
-  if(key == 'q' && !SCA.timeRules.isEmpty()){
-     print("\nCurrent Time-Varying Rules: ");
-      for(int i = 0; i<SCA.timeRules.size();i++){
-       print(" (" + SCA.timeRules.get(i).turningNum + ", " + SCA.timeRules.get(i).crossingNum + "), ");
-     }
-     println("");
+
+  if (key == 'q' && !SCA.timeRules.isEmpty()) {
+    print("\nCurrent Time-Varying Rules: ");
+    for (int i = 0; i<SCA.timeRules.size(); i++) {
+      print(" (" + SCA.timeRules.get(i).turningNum + ", " + SCA.timeRules.get(i).crossingNum + "), ");
+    }
+    println("");
   }
 }
 
