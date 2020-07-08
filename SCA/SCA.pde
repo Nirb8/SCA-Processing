@@ -106,16 +106,16 @@ void draw() {
   //int centerX = 7*width/12;
 
   //int centerY = height/6;
-
-  //ruleGui.drawTurningDisplay();
-
-
-
+  fill(0);
+  SCA.drawRulesets();
+  fill(220);
   if (ruleGui.turningActive) {
     ruleGui.drawTurningDisplay();
   } else {
     ruleGui.drawCrossingDisplay();
   }
+
+
 
   for (StrandedCellGeneration g : SCA.generationList) {
     g.drawGeneration();

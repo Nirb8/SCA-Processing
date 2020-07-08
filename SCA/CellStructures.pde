@@ -42,14 +42,14 @@ public class StrandedCellAutomata {
 
       tempParentCells.addLast(noStrandCell);
     }
-        if (timeVaryingEnabled) {
-        timeRuleIndex++; 
-        if (timeRuleIndex == timeRules.size()) {
-          timeRuleIndex = 0;
-        }
+    if (timeVaryingEnabled) {
+      timeRuleIndex++; 
+      if (timeRuleIndex == timeRules.size()) {
+        timeRuleIndex = 0;
       }
+    }
 
-     println("generated using ruleset at index " + timeRuleIndex);
+    println("generated using ruleset at index " + timeRuleIndex);
     for (int i = 0; i<tempParentCells.size()-1; i++) {
       StrandedCell leftCell = tempParentCells.get(i);
       StrandedCell rightCell = tempParentCells.get(i+1);
@@ -59,9 +59,9 @@ public class StrandedCellAutomata {
 
       Ruleset newRules = leftCell.ruleset;
 
-  
 
-       
+
+
 
       if (timeVaryingEnabled && !timeRules.isEmpty()) {
         newRules = timeRules.get(timeRuleIndex);
@@ -74,13 +74,33 @@ public class StrandedCellAutomata {
     }
 
 
-
-
-
     currentGeneration++;
 
     StrandedCellGeneration nextGeneration = new StrandedCellGeneration(nextX + shiftFactor, nextY, parentGeneration.numCells, currentGeneration, nextCells);
     generationList.addFirst(nextGeneration);
+  }
+
+  public void drawRulesets() {
+
+    int x = generation.xPos + generation.cells.get(generation.cells.size()-1).deltaX + 4*generation.cellSize/3;
+    int y = generation.yPos + generation.cellSize/2;
+    textSize(14);
+    if (timeVaryingEnabled && !timeRules.isEmpty()) {
+      int index = 0;
+
+
+      for (int i = 0; i<15; i++) {
+        text(index + ": (" + timeRules.get(index).turningNum + ", " + timeRules.get(index).crossingNum + ")", x, y - (generation.cellSize * i));
+        index++;
+        if (index == timeRules.size())
+          index = 0;
+      }
+    } else {
+
+      for (int i = 0; i<15; i++) {
+        text(i + ": (" + generation.cells.get(0).ruleset.turningNum + ", " + generation.cells.get(0).ruleset.crossingNum + ")", x, y - (generation.cellSize * i));
+      }
+    }
   }
 }
 
