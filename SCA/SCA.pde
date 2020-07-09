@@ -171,6 +171,22 @@ void mouseClicked() {
       //ruleGui.currentRuleset.printRules();
     }
   }
+  
+  //"buttons" for the turning/crossing tabs
+  
+  int tabX = ruleGui.coordinateList.get(8).x - width/18;
+  int tabY = ruleGui.coordinateList.get(8).y - height/12;
+  
+  if(mouseX > tabX + width/32 && mouseX < tabX + width/32 + width/16 && !ruleGui.turningActive){
+      ruleGui.turningActive = true;
+  }
+  
+  tabX += width/8;
+  
+  if(mouseX > tabX + width/32 && mouseX < tabX + width/32 + width/16 && ruleGui.turningActive){
+      ruleGui.turningActive = false;
+  }
+  
 }
 
 void keyPressed() {
