@@ -85,8 +85,15 @@ public class StrandedCellAutomata {
     int x = generation.xPos + generation.cells.get(generation.cells.size()-1).deltaX + 4*generation.cellSize/3;
     int y = generation.yPos + generation.cellSize/2;
     textSize(14);
+    
+    fill(220);
+    noStroke();
+    rect(x,y-2000, 100, 2050);
+    stroke(0);
+    fill(0);
     if (timeVaryingEnabled && !timeRules.isEmpty()) {
       int index = 0;
+
 
 
       for (int i = 0; i<15; i++) {
@@ -101,7 +108,9 @@ public class StrandedCellAutomata {
         text(i + ": (" + generation.cells.get(0).ruleset.turningNum + ", " + generation.cells.get(0).ruleset.crossingNum + ")", x, y - (generation.cellSize * i));
       }
     }
+    fill(255);
   }
+  
 }
 
 public class StrandedCellGeneration {
