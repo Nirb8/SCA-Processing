@@ -85,10 +85,10 @@ public class StrandedCellAutomata {
     int x = generation.xPos + generation.cells.get(generation.cells.size()-1).deltaX + 4*generation.cellSize/3;
     int y = generation.yPos + generation.cellSize/2;
     textSize(14);
-    
+
     fill(220);
     noStroke();
-    rect(x,y-2000, 100, 2050);
+    rect(x, y-2000, 100, 2050);
     stroke(0);
     fill(0);
     if (timeVaryingEnabled && !timeRules.isEmpty()) {
@@ -110,7 +110,6 @@ public class StrandedCellAutomata {
     }
     fill(255);
   }
-  
 }
 
 public class StrandedCellGeneration {
@@ -170,6 +169,8 @@ public class StrandedCell {
   CellStatus status;
   Ruleset ruleset;
   int size;
+  color leftOutput;
+  color rightOutput;
 
   public StrandedCell(int dx, CellStatus initStatus, Ruleset ruleset) {
     this.deltaX = dx;
@@ -177,10 +178,35 @@ public class StrandedCell {
     this.ruleset = ruleset;
     size = SIZE_CONSTANT;
   }
+  public StrandedCell(int dx, CellStatus initStatus, Ruleset ruleset, color leftInput, color rightInput) {
+    this.deltaX = dx;
+    status = initStatus;
+    this.ruleset = ruleset;
+    size = SIZE_CONSTANT;
+
+    if (this.status == CellStatus.zCross || this.status == CellStatus.sCross) {
+      leftOutput = rightInput;
+      rightOutput = leftInput;
+    } else {
+      leftOutput = leftInput;
+      rightOutput = rightInput;
+    }
+  }
 
   public void drawCell(int x, int y) {
     //if(status != CellStatus.noStrand)
-    drawStrands(x + deltaX, y, this.status, this.size);
+    color leftInput;
+    color rightInput;
+    if(this.status == CellStatus.zCross || this.status == CellStatus.sCross) {
+      leftInput = rightOutput;
+      rightInput = leftOutput;
+    } else{
+      leftInput = leftOutput;
+      rightInput = rightOutput;
+    }
+    
+    
+    drawStrands(x + deltaX, y, this.status, this.size, leftInput, rightInput);
   }
 
   public void cycleStatus() {

@@ -290,6 +290,57 @@ public void drawStrands(int xPos, int yPos, CellStatus status, int cellSize) {
   }
 }
 
+/*
+*  Method to draw a *colored* stranded cell, given the coordinates of its upper left corner, what type of cell it is, its size, and colors of its left and right input strands
+ * 
+ */
+public void drawStrands(int xPos, int yPos, CellStatus status, int cellSize, color leftInput, color rightInput) {
+  fill(255);
+  rect(xPos, yPos, cellSize, cellSize);
+  
+  switch(status) {
+
+  case noStrand:
+    //do nothing
+    break;
+  case straightLeft:
+    fill(leftInput);
+    rect(xPos+(cellSize/6), yPos, (cellSize/6), cellSize);
+    break;
+  case straightRight:
+    fill(rightInput);
+    rect(xPos+(4*cellSize/6), yPos, (cellSize/6), cellSize);
+    break;
+  case leftRight:
+    fill(leftInput);
+    rect(xPos+(cellSize/6), yPos, (cellSize/6), cellSize);
+    fill(rightInput);
+    rect(xPos+(4*cellSize/6), yPos, (cellSize/6), cellSize);
+    break;
+  case rightwardSlant:
+    fill(leftInput);
+    quad(xPos+(cellSize/6), yPos+cellSize, xPos+(2*cellSize/6), yPos+cellSize, xPos+(5*cellSize/6), yPos, xPos+(4*cellSize/6), yPos);
+    break;
+  case leftwardSlant:
+    fill(rightInput);
+    quad(xPos+(cellSize/6), yPos, xPos+(2*cellSize/6), yPos, xPos+(5*cellSize/6), yPos+cellSize, xPos+(4*cellSize/6), yPos+cellSize);
+    break;
+  case zCross:
+    fill(rightInput);
+    quad(xPos+(cellSize/6), yPos, xPos+(2*cellSize/6), yPos, xPos+(5*cellSize/6), yPos+cellSize, xPos+(4*cellSize/6), yPos+cellSize);//leftward slant
+    fill(leftInput);
+    quad(xPos+(cellSize/6), yPos+cellSize, xPos+(2*cellSize/6), yPos+cellSize, xPos+(5*cellSize/6), yPos, xPos+(4*cellSize/6), yPos); //rightward slant ON TOP of previously drawn leftward slant
+    break;
+  case sCross:
+    fill(leftInput);
+    quad(xPos+(cellSize/6), yPos+cellSize, xPos+(2*cellSize/6), yPos+cellSize, xPos+(5*cellSize/6), yPos, xPos+(4*cellSize/6), yPos); //rightward slant
+    fill(rightInput);
+    quad(xPos+(cellSize/6), yPos, xPos+(2*cellSize/6), yPos, xPos+(5*cellSize/6), yPos+cellSize, xPos+(4*cellSize/6), yPos+cellSize); //leftward slant ON TOP of previously drawn rightward slant
+    break;
+  }
+  fill(180);
+}
+
 public String calcNextCell(String leftCode, String rightCode, boolean[] turningRule, boolean[] crossingRule) {
 
   String nextCellCode = "";
