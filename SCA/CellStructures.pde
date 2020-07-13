@@ -56,6 +56,8 @@ public class StrandedCellAutomata {
       CellStatus leftStatus = leftCell.status;
       CellStatus rightStatus = rightCell.status;
       CellStatus newCellStatus = bitcodeToEnum(calcNextCell(enumToBitcode(leftStatus), enumToBitcode(rightStatus), leftCell.ruleset.turning, leftCell.ruleset.crossing));
+      color leftInputColor = leftCell.getRightOutputColor();
+      color rightInputColor = rightCell.getLeftOutputColor();
 
       Ruleset newRules = leftCell.ruleset;
 
@@ -67,7 +69,7 @@ public class StrandedCellAutomata {
         newRules = timeRules.get(timeRuleIndex);
       }
 
-      StrandedCell newCell = new StrandedCell((i*parentGeneration.cellSize), newCellStatus, newRules);
+      StrandedCell newCell = new StrandedCell((i*parentGeneration.cellSize), newCellStatus, newRules, leftInputColor, rightInputColor);
 
 
       nextCells.addLast(newCell);
@@ -169,8 +171,8 @@ public class StrandedCell {
   CellStatus status;
   Ruleset ruleset;
   int size;
-  color leftOutput;
-  color rightOutput;
+  color leftInput;
+  color rightInput;
 
   public StrandedCell(int dx, CellStatus initStatus, Ruleset ruleset) {
     this.deltaX = dx;
@@ -183,33 +185,42 @@ public class StrandedCell {
     status = initStatus;
     this.ruleset = ruleset;
     size = SIZE_CONSTANT;
-
-    if (this.status == CellStatus.zCross || this.status == CellStatus.sCross) {
-      leftOutput = rightInput;
-      rightOutput = leftInput;
-    } else {
-      leftOutput = leftInput;
-      rightOutput = rightInput;
-    }
+    this.leftInput = leftInput;
+    this.rightInput = rightInput;
   }
 
-  public void drawCell(int x, int y) {
-    //if(status != CellStatus.noStrand)
-    color leftInput;
-    color rightInput;
-    if(this.status == CellStatus.zCross || this.status == CellStatus.sCross) {
-      leftInput = rightOutput;
-      rightInput = leftOutput;
-    } else{
-      leftInput = leftOutput;
-      rightInput = rightOutput;
+  public void setColors(color leftInput, color rightInput) {
+    this.leftInput = leftInput;
+    this.rightInput = rightInput;
+  }
+
+  public color getLeftOutputColor() {
+    color leftOutput;  
+    if (this.status == CellStatus.zCross || this.status == CellStatus.sCross) {
+      leftOutput = rightInput;
+    } else {
+      leftOutput = leftInput;
     }
-    
-    
+    return leftOutput;
+  }
+
+  public color getRightOutputColor() {
+    color rightOutput;
+      if (this.status == CellStatus.zCross || this.status == CellStatus.sCross) {
+      rightOutput = leftInput;
+    } else {
+      rightOutput = rightInput;
+    }
+    return rightOutput;
+  }
+
+
+  public void drawCell(int x, int y) {
     drawStrands(x + deltaX, y, this.status, this.size, leftInput, rightInput);
   }
 
   public void cycleStatus() {
+    println("cycling status");
     switch(status) {
 
     case noStrand:

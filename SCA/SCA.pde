@@ -1,6 +1,8 @@
 final int SIZE_CONSTANT = 90; //<>// //<>//
 
 
+
+
 StrandedCellGeneration zero = new StrandedCellGeneration((width*16)/37, (height/6) + 10*90, 10);
 
 
@@ -24,7 +26,53 @@ void setup() {
   println("x = " + zero.xPos);
   println("y = " + zero.yPos);
 
+  color red = color(255, 0, 0);
+  color yellow = color(255, 255, 0);
+  color green = color(0, 255, 0);
+  color teal = color(0, 255, 255);
+  color darkBlue = color(0, 0, 255);
+  color violet = color(255, 0, 255);
 
+
+  
+  color[] colorArray = new color[zero.numCells * 2];  //create array of colors to assign to each strand in zeroth generation
+
+  float lerpInterval = (zero.numCells * 2)/5.0;
+
+  int lerpIndex = 0;
+
+  int lerpNum = 0;
+  for (int i = 0; i<zero.numCells*2; i++) {
+    switch(lerpNum) {
+    case 0:
+      colorArray[i] = lerpColor(red, yellow, lerpIndex/(lerpInterval));
+      break;
+    case 1:
+      colorArray[i] = lerpColor(yellow, green, lerpIndex/(lerpInterval));
+      break;
+    case 2:
+      colorArray[i] = lerpColor(green, teal, lerpIndex/(lerpInterval));
+      break;
+    case 3:
+      colorArray[i] = lerpColor(teal, darkBlue, lerpIndex/(lerpInterval));
+      break;
+    case 4:
+      colorArray[i] = lerpColor(darkBlue, violet, lerpIndex/(lerpInterval));
+      break;
+    }
+    lerpIndex++;
+    if (lerpIndex == lerpInterval) {
+      lerpIndex = 0;
+      lerpNum++;
+    }
+  }
+  
+  int index = 0;
+  for(StrandedCell c : zero.cells){
+   c.setColors(colorArray[index], colorArray[index+1]);
+   index+=2;
+  }
+  
 
   //noLoop();
 
@@ -126,7 +174,7 @@ void mouseClicked() {
 
   //"buttons" for manipulating zeroth generation
   if (mouseY >= zero.yPos && mouseY <= zero.yPos + zero.cellSize) {
-    for (int i = 0; i<zero.cells.size()-1; i++) {
+    for (int i = 0; i<zero.cells.size(); i++) {
       int leftCellBoundary = zero.xPos + zero.cells.get(i).deltaX;
       int rightCellBoundary = leftCellBoundary + zero.cellSize;
 
@@ -171,22 +219,21 @@ void mouseClicked() {
       //ruleGui.currentRuleset.printRules();
     }
   }
-  
+
   //"buttons" for the turning/crossing tabs
-  
+
   int tabX = ruleGui.coordinateList.get(8).x - width/18;
   int tabY = ruleGui.coordinateList.get(8).y - height/12;
-  
-  if(mouseX > tabX + width/32 && mouseX < tabX + width/32 + width/16 && mouseY<tabY && mouseY>tabY - width/48 && !ruleGui.turningActive ){
-      ruleGui.turningActive = true;
+
+  if (mouseX > tabX + width/32 && mouseX < tabX + width/32 + width/16 && mouseY<tabY && mouseY>tabY - width/48 && !ruleGui.turningActive ) {
+    ruleGui.turningActive = true;
   }
-  
+
   tabX += width/8;
-  
-  if(mouseX > tabX + width/32 && mouseX < tabX + width/32 + width/16  && mouseY<tabY && mouseY>tabY - width/48 && ruleGui.turningActive){
-      ruleGui.turningActive = false;
+
+  if (mouseX > tabX + width/32 && mouseX < tabX + width/32 + width/16  && mouseY<tabY && mouseY>tabY - width/48 && ruleGui.turningActive) {
+    ruleGui.turningActive = false;
   }
-  
 }
 
 void keyPressed() {
@@ -297,7 +344,7 @@ public void drawStrands(int xPos, int yPos, CellStatus status, int cellSize) {
 public void drawStrands(int xPos, int yPos, CellStatus status, int cellSize, color leftInput, color rightInput) {
   fill(255);
   rect(xPos, yPos, cellSize, cellSize);
-  
+
   switch(status) {
 
   case noStrand:
