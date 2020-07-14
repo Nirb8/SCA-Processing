@@ -26,12 +26,14 @@ void setup() {
   println("x = " + zero.xPos);
   println("y = " + zero.yPos);
 
-  color red = color(255, 0, 0);
-  color yellow = color(255, 255, 0);
-  color green = color(0, 255, 0);
-  color teal = color(0, 255, 255);
-  color darkBlue = color(0, 0, 255);
-  color violet = color(255, 0, 255);
+  int contrast = 0;
+
+  color red = color(255, contrast, contrast);
+  color yellow = color(255, 255, contrast);
+  color green = color(contrast, 255, contrast);
+  color teal = color(contrast, 255, 255);
+  color darkBlue = color(contrast, contrast, 255);
+  color violet = color(255, contrast, 255);
 
 
   
@@ -44,19 +46,19 @@ void setup() {
   int lerpNum = 0;
   for (int i = 0; i<zero.numCells*2; i++) {
     switch(lerpNum) {
-    case 0:
+    case 3:
       colorArray[i] = lerpColor(red, yellow, lerpIndex/(lerpInterval));
       break;
-    case 1:
+    case 4:
       colorArray[i] = lerpColor(yellow, green, lerpIndex/(lerpInterval));
       break;
-    case 2:
+    case 0:
       colorArray[i] = lerpColor(green, teal, lerpIndex/(lerpInterval));
       break;
-    case 3:
+    case 1:
       colorArray[i] = lerpColor(teal, darkBlue, lerpIndex/(lerpInterval));
       break;
-    case 4:
+    case 2:
       colorArray[i] = lerpColor(darkBlue, violet, lerpIndex/(lerpInterval));
       break;
     }
@@ -65,6 +67,13 @@ void setup() {
       lerpIndex = 0;
       lerpNum++;
     }
+    
+    //lerpNum++;
+    //if(lerpNum == 5){
+    // lerpNum = 0;
+    // lerpIndex++;
+    //}
+    
   }
   
   int index = 0;
