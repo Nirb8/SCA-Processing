@@ -164,6 +164,12 @@ public class StrandedCellGeneration {
       c.drawCell(xPos, yPos);
     }
   }
+  
+  public void drawGeneration(boolean colorActive) {
+    for (StrandedCell c : cells) {
+      c.drawCell(xPos, yPos, colorActive);
+    }
+  }
 }
 
 public class StrandedCell {
@@ -216,9 +222,20 @@ public class StrandedCell {
 
 
   public void drawCell(int x, int y) {
+    
+    
     drawStrands(x + deltaX, y, this.status, this.size, leftInput, rightInput);
   }
 
+
+public void drawCell(int x, int y, boolean colorActive) {
+    
+    if(colorActive)
+    drawStrands(x + deltaX, y, this.status, this.size, leftInput, rightInput);
+    else
+    drawStrands(x + deltaX, y, this.status, this.size);
+    
+  }
   public void cycleStatus() {
     println("cycling status");
     switch(status) {

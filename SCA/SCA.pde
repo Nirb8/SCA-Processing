@@ -1,6 +1,6 @@
 final int SIZE_CONSTANT = 90; //<>// //<>//
 
-
+boolean colorActive = true;
 
 
 StrandedCellGeneration zero = new StrandedCellGeneration((width*16)/37, (height/6) + 10*90, 10);
@@ -166,7 +166,7 @@ void draw() {
 
 
   for (StrandedCellGeneration g : SCA.generationList) {
-    g.drawGeneration();
+    g.drawGeneration(colorActive);
   }
 }
 
@@ -250,6 +250,9 @@ void keyPressed() {
     SCA = new StrandedCellAutomata(zero);
   }
 
+  if(key == 'c'){
+   colorActive = !colorActive; 
+  }
   //if (key == 'n') {
   //  ruleTester++;
   //  println(ruleTester);
