@@ -82,15 +82,15 @@ public class StrandedCellAutomata {
     generationList.addFirst(nextGeneration);
   }
 
-  public void drawRulesets() {
+  public void drawRulesets(int offset) {
 
     int x = generation.xPos + generation.cells.get(generation.cells.size()-1).deltaX + 4*generation.cellSize/3;
-    int y = generation.yPos + generation.cellSize/2;
+    int y = generation.yPos + generation.cellSize/2 - offset;
     textSize(14);
 
     fill(220);
     noStroke();
-    rect(x, y-2000, 100, 2050);
+    rect(x,0, 150, height);
     stroke(0);
     fill(0);
     if (timeVaryingEnabled && !timeRules.isEmpty()) {
@@ -98,7 +98,7 @@ public class StrandedCellAutomata {
 
 
 
-      for (int i = 0; i<15; i++) {
+      for (int i = 0; i<15 + generationList.size(); i++) {
         text(index + ": (" + timeRules.get(index).turningNum + ", " + timeRules.get(index).crossingNum + ")", x, y - (generation.cellSize * i));
         index++;
         if (index == timeRules.size())
@@ -106,7 +106,7 @@ public class StrandedCellAutomata {
       }
     } else {
 
-      for (int i = 0; i<15; i++) {
+      for (int i = 0; i<15 + generationList.size(); i++) {
         text(i + ": (" + generation.cells.get(0).ruleset.turningNum + ", " + generation.cells.get(0).ruleset.crossingNum + ")", x, y - (generation.cellSize * i));
       }
     }
@@ -165,9 +165,10 @@ public class StrandedCellGeneration {
     }
   }
   
-  public void drawGeneration(boolean colorActive) {
+  
+  public void drawGeneration(boolean colorActive, int offset) {
     for (StrandedCell c : cells) {
-      c.drawCell(xPos, yPos, colorActive);
+      c.drawCell(xPos, yPos-offset, colorActive);
     }
   }
 }

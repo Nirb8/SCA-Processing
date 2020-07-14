@@ -1,9 +1,11 @@
-final int SIZE_CONSTANT = 90; //<>// //<>//
+final int SIZE_CONSTANT = 90;  //<>//
 
 boolean colorActive = true;
 
+int offset = 0;
 
 StrandedCellGeneration zero = new StrandedCellGeneration((width*16)/37, (height/6) + 10*90, 10);
+
 
 
 StrandedCellAutomata SCA = new StrandedCellAutomata(zero);
@@ -36,7 +38,7 @@ void setup() {
   color violet = color(255, contrast, 255);
 
 
-  
+
   color[] colorArray = new color[zero.numCells * 2];  //create array of colors to assign to each strand in zeroth generation
 
   float lerpInterval = (zero.numCells * 2)/5.0;
@@ -67,21 +69,20 @@ void setup() {
       lerpIndex = 0;
       lerpNum++;
     }
-    
+
     //lerpNum++;
     //if(lerpNum == 5){
     // lerpNum = 0;
     // lerpIndex++;
     //}
-    
   }
-  
+
   int index = 0;
-  for(StrandedCell c : zero.cells){
-   c.setColors(colorArray[index], colorArray[index+1]);
-   index+=2;
+  for (StrandedCell c : zero.cells) {
+    c.setColors(colorArray[index], colorArray[index+1]);
+    index+=2;
   }
-  
+
 
   //noLoop();
 
@@ -124,27 +125,6 @@ void setup() {
   centerY = origY;
 
   //ruleGui.debugCoords();
-
-
-  //bit 8
-  //drawStrands(centerX, centerY, CellStatus.noStrand, width/24);
-  //drawStrands(centerX - width/48, centerY + width/24, CellStatus.noStrand, width/24);
-  //drawStrands(centerX + width/48, centerY + width/24, CellStatus.noStrand, width/24);
-
-  //centerX = centerX + (width/12) + (width/36);
-
-
-
-
-  //  centerX = centerX + (width/12) + (width/36);
-  //  centerY = centerY + (width/12) + (width/36);
-
-
-  //  drawStrands(centerX, centerY, CellStatus.noStrand, width/24);
-
-  //  centerX = centerX + (width/12) + (width/36);
-
-  //  drawStrands(centerX, centerY, CellStatus.noStrand, width/24);
 }
 int ruleTester = 0;
 
@@ -160,11 +140,9 @@ void draw() {
     SCA.clearNeeded = false;
   }
 
-  //int centerX = 7*width/12;
 
-  //int centerY = height/6;
   fill(0);
-  SCA.drawRulesets();
+  SCA.drawRulesets(offset);
   fill(220);
   if (ruleGui.turningActive) {
     ruleGui.drawTurningDisplay();
@@ -175,7 +153,7 @@ void draw() {
 
 
   for (StrandedCellGeneration g : SCA.generationList) {
-    g.drawGeneration(colorActive);
+    g.drawGeneration(colorActive, offset);
   }
 }
 
@@ -245,6 +223,23 @@ void mouseClicked() {
   }
 }
 
+void mouseWheel(MouseEvent event) {
+  int e = event.getCount();
+
+  if (keyPressed == true)
+    if (key == CODED)
+      if (keyCode == SHIFT) {
+        offset += e * 45;
+      }
+    
+      offset += e * 15;
+
+  if (offset>0) {
+    offset = 0;
+  }
+  SCA.clearNeeded = true;
+}
+
 void keyPressed() {
   if (key == ' ') {
     SCA.growthCycle();
@@ -257,10 +252,11 @@ void keyPressed() {
 
   if (key == 'r') {
     SCA = new StrandedCellAutomata(zero);
+    offset = 0;
   }
 
-  if(key == 'c'){
-   colorActive = !colorActive; 
+  if (key == 'c') {
+    colorActive = !colorActive;
   }
   //if (key == 'n') {
   //  ruleTester++;
