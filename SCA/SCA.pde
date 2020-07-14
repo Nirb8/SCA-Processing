@@ -64,17 +64,19 @@ void setup() {
       colorArray[i] = lerpColor(darkBlue, violet, lerpIndex/(lerpInterval));
       break;
     }
-    lerpIndex++;
-    if (lerpIndex == lerpInterval) {
-      lerpIndex = 0;
-      lerpNum++;
-    }
-
-    //lerpNum++;
-    //if(lerpNum == 5){
-    // lerpNum = 0;
-    // lerpIndex++;
+    //lerpIndex++;
+    //if (lerpIndex == lerpInterval) {
+    //  lerpIndex = 0;
+    //  lerpNum++;
     //}
+
+    lerpNum++;
+    if(lerpNum == 5){
+     lerpNum = 0;
+     lerpIndex++;
+    }
+    
+    
   }
 
   int index = 0;

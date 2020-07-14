@@ -203,7 +203,7 @@ public class StrandedCell {
 
   public color getLeftOutputColor() {
     color leftOutput;  
-    if (this.status == CellStatus.zCross || this.status == CellStatus.sCross) {
+    if (this.status == CellStatus.zCross || this.status == CellStatus.sCross || this.status == CellStatus.leftwardSlant || this.status == CellStatus.rightwardSlant) {
       leftOutput = rightInput;
     } else {
       leftOutput = leftInput;
@@ -213,7 +213,7 @@ public class StrandedCell {
 
   public color getRightOutputColor() {
     color rightOutput;
-      if (this.status == CellStatus.zCross || this.status == CellStatus.sCross) {
+      if (this.status == CellStatus.zCross || this.status == CellStatus.sCross || this.status == CellStatus.leftwardSlant || this.status == CellStatus.rightwardSlant) {
       rightOutput = leftInput;
     } else {
       rightOutput = rightInput;
