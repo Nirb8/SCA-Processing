@@ -1,14 +1,20 @@
 import java.util.LinkedList;
 
+/**
+ *  Main data class, contains the lists of generations and manages generating new generations and drawing the ruleset labels
+ */
 public class StrandedCellAutomata {
   int currentGeneration;
-  LinkedList<StrandedCellGeneration> generationList;
+  LinkedList<StrandedCellGeneration> generationList; //using LinkedLists because Processing ArrayLists don't like to stay sorted for some reason, also LinkedLists have addFirst() and addLast()
   StrandedCellGeneration generation;
   boolean clearNeeded;
   boolean timeVaryingEnabled;
   LinkedList<Ruleset> timeRules;
   int timeRuleIndex;
 
+  /**
+   *  Constructor for StrandedCellAutomata
+   */
   StrandedCellAutomata(StrandedCellGeneration seed) {
     generationList = new LinkedList<StrandedCellGeneration>();
     generationList.addFirst(seed);
@@ -19,7 +25,10 @@ public class StrandedCellAutomata {
     timeRules = new LinkedList<Ruleset>();
   }
 
-
+  /**
+   *  Iterates over the latest generation in the generationList and creates a new generation based on the previous generation's cells,
+   *  adds the newly created generation to the front of the generationList
+   */
   public void growthCycle() {
     StrandedCellGeneration parentGeneration = generationList.get(0);
 
@@ -30,18 +39,21 @@ public class StrandedCellAutomata {
 
     LinkedList<StrandedCell> tempParentCells = new LinkedList<StrandedCell>();
     tempParentCells.addAll(parentGeneration.cells);
-    int shiftFactor = parentGeneration.cellSize/2;
+    int shiftFactor = parentGeneration.cellSize/2; //how much to offset the cells in order to create the "staggered brick" structure of the cells
 
+     //checks if the index of the parent generation is even/odd and adjusts the offset accordingly(to the left/negative for even, to the right/positive for odd)
+     //also adds an empty cell to the front or end of the tempParentCells list for calculating the cases with only one neighbor and a border cell(border cells count as noStrand cells)
     if (currentGeneration % 2 == 0) {
       StrandedCell noStrandCell = new StrandedCell(0, CellStatus.noStrand, tempParentCells.getFirst().ruleset);
       shiftFactor *= -1;
       tempParentCells.addFirst(noStrandCell);
     } else {
-
       StrandedCell noStrandCell = new StrandedCell(0, CellStatus.noStrand, tempParentCells.getLast().ruleset);
 
       tempParentCells.addLast(noStrandCell);
     }
+    
+    //for time varying rulesets, increments the index in ruleset list and loops back to zero if it reaches the end of the list
     if (timeVaryingEnabled) {
       timeRuleIndex++; 
       if (timeRuleIndex == timeRules.size()) {
@@ -50,6 +62,7 @@ public class StrandedCellAutomata {
     }
 
     println("generated using ruleset at index " + timeRuleIndex);
+    //iterates over every neighbor pair and adds the newly generated cells to the next generation's cell list
     for (int i = 0; i<tempParentCells.size()-1; i++) {
       StrandedCell leftCell = tempParentCells.get(i);
       StrandedCell rightCell = tempParentCells.get(i+1);
@@ -61,20 +74,14 @@ public class StrandedCellAutomata {
 
       Ruleset newRules = leftCell.ruleset;
 
-
-
-
-
       if (timeVaryingEnabled && !timeRules.isEmpty()) {
         newRules = timeRules.get(timeRuleIndex);
       }
 
       StrandedCell newCell = new StrandedCell((i*parentGeneration.cellSize), newCellStatus, newRules, leftInputColor, rightInputColor);
 
-
       nextCells.addLast(newCell);
     }
-
 
     currentGeneration++;
 
@@ -82,6 +89,9 @@ public class StrandedCellAutomata {
     generationList.addFirst(nextGeneration);
   }
 
+  /**
+   *  Draws the adajacent rule labels, with a buffer of 15 rulesets in advance of the currently displayed generations
+   */
   public void drawRulesets(int offset) {
 
     int x = generation.xPos + generation.cells.get(generation.cells.size()-1).deltaX + 4*generation.cellSize/3;
@@ -90,13 +100,11 @@ public class StrandedCellAutomata {
 
     fill(220);
     noStroke();
-    rect(x,0, 150, height);
+    rect(x, 0, 150, height);
     stroke(0);
     fill(0);
     if (timeVaryingEnabled && !timeRules.isEmpty()) {
       int index = 0;
-
-
 
       for (int i = 0; i<15 + generationList.size(); i++) {
         text(index + ": (" + timeRules.get(index).turningNum + ", " + timeRules.get(index).crossingNum + ")", x, y - (generation.cellSize * i));
@@ -114,6 +122,10 @@ public class StrandedCellAutomata {
   }
 }
 
+
+/**
+ *  Represents a SCA Generation  
+ */
 public class StrandedCellGeneration {
   LinkedList<StrandedCell> cells;
   int cellSize;
@@ -122,8 +134,9 @@ public class StrandedCellGeneration {
   int xPos; //x coord of leftmost cell
   int yPos; //y coord of leftmost cell
 
-
-  //temp special constructor for 0th generation
+  /**
+   *  Special constructor for creating zeroth generation
+   */
   public StrandedCellGeneration(int x, int y, int numCells) {
     xPos = x;
     yPos = y;
@@ -132,12 +145,13 @@ public class StrandedCellGeneration {
     cells = new LinkedList<StrandedCell>();
     generationNumber = 0;
 
-    // cells.add(new StrandedCell(0, CellStatus.zCross, new Ruleset(324, 6)));
     for (int i = 0; i<numCells; i++) {
-      cells.add(new StrandedCell(i*cellSize, CellStatus.noStrand, new Ruleset(324, 140)));
+      cells.add(new StrandedCell(i*cellSize, CellStatus.noStrand, new Ruleset(DEFAULT_TURNING, DEFAULT_CROSSING)));
     }
-    //cells.add(new StrandedCell((numCells-1)*cellSize, CellStatus.noStrand, new Ruleset(324, 6)));
   }
+  /**
+   *  Standard constructor for a StrandedCellGeneration, parameters need to be initialized prior to the use of this constructor
+   */
   public StrandedCellGeneration(int x, int y, int numCells, int generationNumber, LinkedList<StrandedCell> cellList) {
     xPos = x;
     yPos = y;
@@ -147,25 +161,27 @@ public class StrandedCellGeneration {
     cells = cellList;
   }
 
+  /**
+   *  Debug method that shows the status of all cells in a generation's cell list
+   */
   public void listCellStatus() {
     for (StrandedCell c : cells) {
       println(c.status + ", ");
     }
   }
 
+  /**
+   *  Method to refresh all of a generation's cells with a new ruleset, **ONLY INTENDED FOR USE WITH ZEROTH GENERATION**
+   */
   public void updateCellRulesets(Ruleset r) {
     for (StrandedCell c : cells) {
       c.ruleset = r;
     }
   }
 
-  public void drawGeneration() {
-    for (StrandedCell c : cells) {
-      c.drawCell(xPos, yPos);
-    }
-  }
-  
-  
+  /**
+   *  Iterates through a generation's cells and calls each StrandedCell's drawCell method with the given offset and colorActive status
+   */
   public void drawGeneration(boolean colorActive, int offset) {
     for (StrandedCell c : cells) {
       c.drawCell(xPos, yPos-offset, colorActive);
@@ -173,20 +189,29 @@ public class StrandedCellGeneration {
   }
 }
 
+/**
+ *  Represents a single SCA cell
+ */
 public class StrandedCell {
-  int deltaX;
-  CellStatus status;
+  int deltaX; //displacement from the origin of the generation this cell belongs to
+  CellStatus status; 
   Ruleset ruleset;
   int size;
-  color leftInput;
-  color rightInput;
+  color leftInput; //the color of this cell's left strand color
+  color rightInput;//the colorof this cell's right strand color
 
+  /**
+   *  Depreciated method for creating cells w/o color
+   */
   public StrandedCell(int dx, CellStatus initStatus, Ruleset ruleset) {
     this.deltaX = dx;
     status = initStatus;
     this.ruleset = ruleset;
     size = SIZE_CONSTANT;
   }
+  /**
+   *  Creates cells with color
+   */
   public StrandedCell(int dx, CellStatus initStatus, Ruleset ruleset, color leftInput, color rightInput) {
     this.deltaX = dx;
     status = initStatus;
@@ -196,11 +221,17 @@ public class StrandedCell {
     this.rightInput = rightInput;
   }
 
+  /**
+   *  Recolors cells given parameters for new colors
+   */
   public void setColors(color leftInput, color rightInput) {
     this.leftInput = leftInput;
     this.rightInput = rightInput;
   }
 
+  /**
+   *  For use in generating new cells, returns the color of the strand leaving the top left of the cell
+   */
   public color getLeftOutputColor() {
     color leftOutput;  
     if (this.status == CellStatus.zCross || this.status == CellStatus.sCross || this.status == CellStatus.leftwardSlant || this.status == CellStatus.rightwardSlant) {
@@ -210,10 +241,12 @@ public class StrandedCell {
     }
     return leftOutput;
   }
-
+  /**
+   *  For use in generating new cells, returns the color of the strand leaving the top right of the cell
+   */
   public color getRightOutputColor() {
     color rightOutput;
-      if (this.status == CellStatus.zCross || this.status == CellStatus.sCross || this.status == CellStatus.leftwardSlant || this.status == CellStatus.rightwardSlant) {
+    if (this.status == CellStatus.zCross || this.status == CellStatus.sCross || this.status == CellStatus.leftwardSlant || this.status == CellStatus.rightwardSlant) {
       rightOutput = leftInput;
     } else {
       rightOutput = rightInput;
@@ -221,24 +254,28 @@ public class StrandedCell {
     return rightOutput;
   }
 
-
+  /**
+   *  Deprecated method that calls the drawStrands method with the cell's data, takes the x and y coordinates of the generation it belongs to
+   */
   public void drawCell(int x, int y) {
-    
-    
     drawStrands(x + deltaX, y, this.status, this.size, leftInput, rightInput);
   }
 
+  /**
+   *  Calls drawStrands method with different parameters depending on status of colorActive, takes the x and y coordinates of the generation it belongs to
+   */
+  public void drawCell(int x, int y, boolean colorActive) {
 
-public void drawCell(int x, int y, boolean colorActive) {
-    
-    if(colorActive)
-    drawStrands(x + deltaX, y, this.status, this.size, leftInput, rightInput);
+    if (colorActive)
+      drawStrands(x + deltaX, y, this.status, this.size, leftInput, rightInput);
     else
-    drawStrands(x + deltaX, y, this.status, this.size);
-    
+      drawStrands(x + deltaX, y, this.status, this.size);
   }
+  /**
+   *  Cycles cell status between the 8 possible states
+   */
   public void cycleStatus() {
-    println("cycling status");
+    //println("cycling status");
     switch(status) {
 
     case noStrand:
@@ -269,18 +306,27 @@ public void drawCell(int x, int y, boolean colorActive) {
   }
 }
 
+/**
+ *  Wrapper object that combines turning rule and crossing rule boolean arrays, with some utility methods
+ */
 public class Ruleset {
   boolean[] turning;
   boolean[] crossing;
-  int turningNum; //for debug purposes
-  int crossingNum; //for debug purposes
+  int turningNum; //for debug/display purposes
+  int crossingNum; //for debug/display purposes
 
-
+  /**
+   *  Default constructor, initializes to turning/crossing rule 0
+   */
   public Ruleset() {
     turning = new boolean[9];
     crossing = new boolean[9];
+    turningNum = 0;
+    crossingNum = 0;
   }
-
+  /**
+   *  Constructor that takes a int for each rule and writes them to the boolean arrays
+   */
   public Ruleset(int turningRuleNum, int crossingRuleNum) {
     turning = new boolean[9];
     crossing = new boolean[9];
@@ -288,17 +334,28 @@ public class Ruleset {
     setRules(turningRuleNum, crossingRuleNum);
   }
 
+  /**
+   *  Sets the boolean arrays in this Ruleset object to match the given parameters
+   */
   public void setRules(int turningRule, int crossingRule) {
 
-
-    String binaryTurning = Integer.toBinaryString(turningRule);
+    // "zero out" the array just in case the binary strings aren't the full 9 characters
+    for(int i = 0;i<9;i++){
+      turning[i] = false;
+      crossing[i] = false;
+    }
+    
+    String binaryTurning = Integer.toBinaryString(turningRule); //this will set binaryTurning to a string that may not be 9 characters in the case of consecutive zeros from bit 8
     //println(binaryTurning);
-    String binaryCrossing = Integer.toBinaryString(crossingRule);
+    String binaryCrossing = Integer.toBinaryString(crossingRule); //does the same with binaryCrossing
     // println(binaryCrossing);
 
     turningNum = turningRule;
     crossingNum = crossingRule;
     int count = 0;
+    //iterate backwards over the binary string, which ends up reading the bits in order
+    //ex: for "100001011" it will start reading from the rightmost 1, and it puts that value into the boolean array index 0
+    //if the binary string isn't 9 characters long the untouched
     for (int i = binaryTurning.length()-1; i >= 0; i--) {
       if (binaryTurning.charAt(i) == '0')
         turning[count] = false;
@@ -319,30 +376,39 @@ public class Ruleset {
     }
   }
 
-  //for debugging
+  /**
+   *  Debug method to print current ruleset to console
+   */
   public void printRules() {
     println("Current Turning Rule: " + turningNum + "\nCurrent Crossing Rule: " + crossingNum);
   }
-
+  /**
+   *  Unused method that returns value of boolean array at the given bit number, returning false by default if the given index doesn't exist in the array
+   */
   public boolean turningRule(int bitNumber) {
     if (bitNumber<0 || bitNumber>8)
       return false;
 
     return turning[bitNumber];
   }
-
+  /**
+   *  Unused method that returns value of boolean array at the given bit number, returning false by default if the given index doesn't exist in the array
+   */
   public boolean crossingRule(int bitNumber) {
     if (bitNumber<0 || bitNumber>8)
       return false;
 
     return crossing[bitNumber];
   }
-
+/**
+*  Syncs the rulesets represented by the ints to match the rulesets represented by the boolean arrays, call this everytime either boolean array is updated
+*/
   public void updateNumbers() {
 
     //convert turning rule boolean array into binary string
 
     String turningBinaryString = "";
+    //does the reverse of the process in setRules() and turns the boolean arrays back into binary strings
     for (int i = 0; i < turning.length; i++) {
       if (turning[i])
         turningBinaryString = "1" + turningBinaryString;
@@ -350,7 +416,7 @@ public class Ruleset {
         turningBinaryString = "0" + turningBinaryString;
     }
 
-    turningNum = Integer.parseInt(turningBinaryString, 2);
+    turningNum = Integer.parseInt(turningBinaryString, 2); //this reads the string as an integer in radix 2 (reads it as a binary number)
 
     String crossingBinaryString = "";
     for (int i = 0; i < crossing.length; i++) {
@@ -364,6 +430,9 @@ public class Ruleset {
   }
 }
 
+/**
+*  Simple container for 2 ints representing a coordinate point
+*/
 public class Point {
   int x;
   int y;
@@ -374,9 +443,7 @@ public class Point {
 }
 
 /**
- *
  *  Rule picker GUI object
- *
  */
 public class RuleDisplay {
   LinkedList<Point> coordinateList;
@@ -384,7 +451,9 @@ public class RuleDisplay {
   boolean turningActive;
   int cellSize;
 
-
+/**
+*  Default constructor, display shows turning rules by default
+*/
   RuleDisplay() {
     currentRuleset = new Ruleset();
     currentRuleset.setRules(0, 0);
@@ -393,7 +462,9 @@ public class RuleDisplay {
     cellSize = SIZE_CONSTANT;
     coordinateList = new LinkedList<Point>();
   }
-  //This method draws an active turning tab along with the sample cells
+  /**
+  *  Draws an active turning tab along with the sample cells
+  */
   public void drawTurningDisplay() {
     int index = 0;
 
@@ -403,7 +474,7 @@ public class RuleDisplay {
     //draw active turning tab
     fill(255);
     //strokeWeight(5);
-    stroke(52, 195, 235);
+    stroke(255, 234, 0); //color of tab
     beginShape();
     vertex(origCenterX, origCenterY);
     vertex(origCenterX + width/32, origCenterY - width/48);
@@ -536,6 +607,9 @@ public class RuleDisplay {
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.leftwardSlant, cellSize); //draw right neighbor
   }
 
+/**
+*  Draws an active crossing tab along with the sample cells
+*/
   public void drawCrossingDisplay() {
 
     int index = 0;
@@ -563,7 +637,7 @@ public class RuleDisplay {
     //draw active crossing tab
     fill(255);
     //strokeWeight(5);
-    stroke(52, 195, 235);
+    stroke(255, 234, 0);
     beginShape();
     vertex(origCenterX, origCenterY);
     vertex(origCenterX + width/32, origCenterY - width/48);
@@ -677,6 +751,9 @@ public class RuleDisplay {
     drawStrands(center.x - cellSize/2, center.y + cellSize, CellStatus.zCross, cellSize); //draw left neighbor
     drawStrands(center.x + cellSize/2, center.y + cellSize, CellStatus.sCross, cellSize); //draw right neighbor
   }
+  /**
+  *  Debug method that prints all the coordinates of the sample cell locations(upper left corners)
+  */
   public void debugCoords() {
     for (int i = 0; i<coordinateList.size(); i++) {
       println(i + ":  (" + coordinateList.get(i).x + ", " + coordinateList.get(i).y+ ")");

@@ -1,5 +1,8 @@
 final int SIZE_CONSTANT = 90;  //<>//
 
+final int DEFAULT_TURNING = 324;
+final int DEFAULT_CROSSING = 140;
+
 boolean colorActive = true;
 
 int offset = 0;
