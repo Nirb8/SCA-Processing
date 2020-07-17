@@ -5,11 +5,13 @@ final int DEFAULT_CROSSING = 140;
 
 boolean colorActive = true;
 
+boolean turningTextboxActive = false;
+
+int textboxErrorTimer = 0;
+
 int offset = 0;
 
 StrandedCellGeneration zero = new StrandedCellGeneration((width*16)/37, (height/6) + 10*90, 10);
-
-
 
 StrandedCellAutomata SCA = new StrandedCellAutomata(zero);
 
@@ -74,12 +76,10 @@ void setup() {
     //}
 
     lerpNum++;
-    if(lerpNum == 5){
-     lerpNum = 0;
-     lerpIndex++;
+    if (lerpNum == 5) {
+      lerpNum = 0;
+      lerpIndex++;
     }
-    
-    
   }
 
   int index = 0;
@@ -145,7 +145,6 @@ void draw() {
     SCA.clearNeeded = false;
   }
 
-
   fill(0);
   SCA.drawRulesets(offset);
   fill(220);
@@ -155,11 +154,25 @@ void draw() {
     ruleGui.drawCrossingDisplay();
   }
 
-
-
   for (StrandedCellGeneration g : SCA.generationList) {
     g.drawGeneration(colorActive, offset);
   }
+  
+  if(textboxErrorTimer > 0){
+    textSize(24);
+    fill(#9E0A0A);
+    text("Error: Rule specified does not match bounds (0 - 511)", 7 * width/12, 7 * height/8);
+    fill(0);
+    textboxErrorTimer--;
+    if(textboxErrorTimer == 0){
+      noStroke();
+      fill(220);
+      rect(7 * width/12, 6.8 * height/8, textWidth("Error: Rule specified does not match bounds (0 - 511)"), 48);
+      fill(255);
+      stroke(0);
+    }
+  }
+  
 }
 
 void mouseClicked() {
@@ -219,11 +232,16 @@ void mouseClicked() {
 
   if (mouseX > tabX + width/32 && mouseX < tabX + width/32 + width/16 && mouseY<tabY && mouseY>tabY - width/48 && !ruleGui.turningActive ) {
     ruleGui.turningActive = true;
+  } else {
+    //if turning tab is already active and is clicked a second time
+    if (mouseX > tabX + width/32 && mouseX < tabX + width/32 + width/16 && mouseY<tabY && mouseY>tabY - width/48 && ruleGui.turningActive) {
+      turningTextboxActive = true;
+    }
   }
 
   tabX += width/8;
 
-  if (mouseX > tabX + width/32 && mouseX < tabX + width/32 + width/16  && mouseY<tabY && mouseY>tabY - width/48 && ruleGui.turningActive) {
+  if (mouseX > tabX + width/32 && mouseX < tabX + width/32 + width/16  && mouseY<tabY && mouseY>tabY - width/48 && ruleGui.turningActive && !turningTextboxActive) {
     ruleGui.turningActive = false;
   }
 }
@@ -236,8 +254,8 @@ void mouseWheel(MouseEvent event) {
       if (keyCode == SHIFT) {
         offset += e * 45;
       }
-    
-      offset += e * 15;
+
+  offset += e * 15;
 
   if (offset>0) {
     offset = 0;
@@ -246,6 +264,37 @@ void mouseWheel(MouseEvent event) {
 }
 
 void keyPressed() {
+  if (turningTextboxActive) {
+    
+    
+    if (key == BACKSPACE) {
+      if (ruleGui.textbox.length() > 0)
+        ruleGui.textbox = ruleGui.textbox.substring(0, ruleGui.textbox.length()-1);
+    } else {
+      if (ruleGui.textbox.length()< 3) {
+        if (Character.isDigit(key))
+          ruleGui.textbox += key;
+      }
+    }
+    
+    if(key == ENTER || key == RETURN){
+      //attempt to write current textbox input to ruleset
+      int newRule = Integer.parseInt(ruleGui.textbox);
+      println("attempting to write rule #" + newRule);
+      if(newRule > 511){
+      textboxErrorTimer = 169;
+      } else {
+      if(turningTextboxActive){
+        int currentCrossing = ruleGui.currentRuleset.crossingNum;
+        ruleGui.currentRuleset.setRules(newRule, currentCrossing);
+        turningTextboxActive = false; 
+        ruleGui.textbox = ""; //clear textbox buffer
+        }
+      }
+    }
+  }else{
+
+
   if (key == ' ') {
     SCA.growthCycle();
   }
@@ -307,7 +356,8 @@ void keyPressed() {
       print(" (" + SCA.timeRules.get(i).turningNum + ", " + SCA.timeRules.get(i).crossingNum + "), ");
     }
     println("");
-  }
+    }
+  } 
 }
 
 /*
