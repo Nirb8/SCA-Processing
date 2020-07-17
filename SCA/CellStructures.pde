@@ -9,8 +9,11 @@ public class StrandedCellAutomata {
   StrandedCellGeneration generation;
   boolean clearNeeded;
   boolean timeVaryingEnabled;
-  LinkedList<Ruleset> timeRules;
-  int timeRuleIndex;
+  boolean spaceVaryingEnabled;
+  final int splitIndex = 5;
+
+  LinkedList<Ruleset> rulesetList;
+  int ruleIndex;
 
   /**
    *  Constructor for StrandedCellAutomata
@@ -22,8 +25,10 @@ public class StrandedCellAutomata {
     generation = seed;
     clearNeeded = true;
     timeVaryingEnabled = false;
-    timeRules = new LinkedList<Ruleset>();
+    spaceVaryingEnabled = false;
+    rulesetList = new LinkedList<Ruleset>();
   }
+
 
   /**
    *  Iterates over the latest generation in the generationList and creates a new generation based on the previous generation's cells,
@@ -55,13 +60,13 @@ public class StrandedCellAutomata {
 
     //for time varying rulesets, increments the index in ruleset list and loops back to zero if it reaches the end of the list
     if (timeVaryingEnabled) {
-      timeRuleIndex++; 
-      if (timeRuleIndex == timeRules.size()) {
-        timeRuleIndex = 0;
+      ruleIndex++; 
+      if (ruleIndex == rulesetList.size()) {
+        ruleIndex = 0;
       }
     }
 
-    println("generated using ruleset at index " + timeRuleIndex);
+    //println("generated using ruleset at index " + ruleIndex);
     //iterates over every neighbor pair and adds the newly generated cells to the next generation's cell list
     for (int i = 0; i<tempParentCells.size()-1; i++) {
       StrandedCell leftCell = tempParentCells.get(i);
@@ -69,14 +74,24 @@ public class StrandedCellAutomata {
       CellStatus leftStatus = leftCell.status;
       CellStatus rightStatus = rightCell.status;
       CellStatus newCellStatus = bitcodeToEnum(calcNextCell(enumToBitcode(leftStatus), enumToBitcode(rightStatus), leftCell.ruleset.turning, leftCell.ruleset.crossing));
+      if (spaceVaryingEnabled) {
+        if (i<splitIndex) { 
+          Ruleset left = rulesetList.get(0);//use left half ruleset
+          newCellStatus = bitcodeToEnum(calcNextCell(enumToBitcode(leftStatus), enumToBitcode(rightStatus), left.turning, left.crossing));
+        } else {
+          Ruleset right = rulesetList.get(1);//use right half ruleset
+          newCellStatus = bitcodeToEnum(calcNextCell(enumToBitcode(leftStatus), enumToBitcode(rightStatus), right.turning, right.crossing));
+        }
+      }
       color leftInputColor = leftCell.getRightOutputColor();
       color rightInputColor = rightCell.getLeftOutputColor();
 
       Ruleset newRules = leftCell.ruleset;
 
-      if (timeVaryingEnabled && !timeRules.isEmpty()) {
-        newRules = timeRules.get(timeRuleIndex);
+      if (timeVaryingEnabled && !rulesetList.isEmpty()) { //prevents trying to access an empty list if user has not input any rules into the rulesetList
+        newRules = rulesetList.get(ruleIndex);
       }
+
 
       StrandedCell newCell = new StrandedCell((i*parentGeneration.cellSize), newCellStatus, newRules, leftInputColor, rightInputColor);
 
@@ -103,19 +118,22 @@ public class StrandedCellAutomata {
     rect(x, 0, 150, height);
     stroke(0);
     fill(0);
-    if (timeVaryingEnabled && !timeRules.isEmpty()) {
+    if (timeVaryingEnabled && !rulesetList.isEmpty()) {
       int index = 0;
 
       for (int i = 0; i<15 + generationList.size(); i++) {
-        text(index + ": (" + timeRules.get(index).turningNum + ", " + timeRules.get(index).crossingNum + ")", x, y - (generation.cellSize * i));
+        text(index + ": (" + rulesetList.get(index).turningNum + ", " + rulesetList.get(index).crossingNum + ")", x, y - (generation.cellSize * i));
         index++;
-        if (index == timeRules.size())
+        if (index == rulesetList.size())
           index = 0;
       }
     } else {
-
-      for (int i = 0; i<15 + generationList.size(); i++) {
-        text(i + ": (" + generation.cells.get(0).ruleset.turningNum + ", " + generation.cells.get(0).ruleset.crossingNum + ")", x, y - (generation.cellSize * i));
+      if (!spaceVaryingEnabled){
+        for (int i = 0; i<15 + generationList.size(); i++) {
+          text(i + ": (" + generation.cells.get(0).ruleset.turningNum + ", " + generation.cells.get(0).ruleset.crossingNum + ")", x, y - (generation.cellSize * i));
+        }
+      } else {
+        
       }
     }
     fill(255);

@@ -49,7 +49,7 @@ void setup() {
   color[] colorArray = new color[zero.numCells * 2];  //create array of colors to assign to each strand in zeroth generation
 
   float lerpInterval = (zero.numCells * 2)/5.0; // this is total number of cells * 2 to get total number of strands
-                                                // and dividing by 5.0 because there's 5 color interpotation intervals
+  // and dividing by 5.0 because there's 5 color interpotation intervals
 
   int lerpIndex = 0;
 
@@ -117,9 +117,9 @@ void setup() {
   int origX = centerX;
   int origY = centerY;
 
- // int count = 8; <-- used to check what number cells were at which positions
- //assigns each cell in the display its position in the sample grid, 
- //what it actually does is add all the coordinates to the front of the coordinateList in reverse order so that it ends up sorted from 0-8
+  // int count = 8; <-- used to check what number cells were at which positions
+  //assigns each cell in the display its position in the sample grid, 
+  //what it actually does is add all the coordinates to the front of the coordinateList in reverse order so that it ends up sorted from 0-8
   for (int i = 0; i<3; i++) {
     for (int j = 0; j<3; j++)
     {
@@ -127,7 +127,7 @@ void setup() {
       fill(0);
       //text(count, centerX, centerY);
       fill(255);
-     // count--;
+      // count--;
       centerX = centerX + (width/12) + (width/36);
     }
     centerX = origX;
@@ -140,7 +140,7 @@ void setup() {
 
 void draw() {
 
-  if (SCA.clearNeeded){ //redraws automata
+  if (SCA.clearNeeded) { //redraws automata
     fill(220);
     noStroke();
     rect(0, 0, (width/2), height); //clears entire left half of screen
@@ -152,7 +152,7 @@ void draw() {
   fill(0);
   SCA.drawRulesets(offset); //draws the rulesets labels to the side
   fill(220);
-  
+
   if (ruleGui.turningActive) {
     ruleGui.drawTurningDisplay();
   } else {
@@ -370,7 +370,9 @@ void keyPressed() {
 
     //reset automata
     if (key == 'r') {
-      SCA = new StrandedCellAutomata(zero);
+      SCA.generationList.clear();
+      SCA.generationList.add(zero);
+      SCA.clearNeeded = true;
       offset = 0;
     }
 
@@ -382,13 +384,21 @@ void keyPressed() {
     if (key == 'l') {
       Ruleset updatedRuleset = new Ruleset(ruleGui.currentRuleset.turningNum, ruleGui.currentRuleset.crossingNum);
 
-      if (!SCA.timeVaryingEnabled)
+      if (!SCA.timeVaryingEnabled && !SCA.spaceVaryingEnabled)
         zero.updateCellRulesets(updatedRuleset);
       else
       {
-
-        SCA.timeRules.addLast(updatedRuleset);
-        zero.updateCellRulesets(SCA.timeRules.get(0));
+        if (SCA.timeVaryingEnabled) {
+          SCA.rulesetList.addLast(updatedRuleset);
+          zero.updateCellRulesets(SCA.rulesetList.get(0));
+        } else {
+          if (SCA.spaceVaryingEnabled) {
+            SCA.rulesetList.addFirst(updatedRuleset);
+            if (SCA.rulesetList.size() > 2) {
+              SCA.rulesetList.removeLast();
+            }
+          }
+        }
       }
     }
 
@@ -396,23 +406,42 @@ void keyPressed() {
       ruleGui.turningActive = !ruleGui.turningActive;
     }
     if (key == 't') {
-      SCA.timeVaryingEnabled = !SCA.timeVaryingEnabled;
 
-      if (SCA.timeVaryingEnabled) {
-        println("Time Varying Rulesets Enabled");
-        SCA.timeRuleIndex = 0;
-        SCA.timeRules = new LinkedList<Ruleset>();
+      if (!SCA.timeVaryingEnabled && !SCA.spaceVaryingEnabled) {
+        SCA.timeVaryingEnabled = true;
+        SCA.spaceVaryingEnabled = false;
+        print("Single Ruleset Mode Disabled");
+        println(", Time Varying Rulesets Enabled");
+        SCA.ruleIndex = 0;
+        SCA.rulesetList.clear();
       } else {
-        println("Time Varying Rulesets Disabled");
-        SCA.timeRuleIndex = 0;
-        SCA.timeRules = new LinkedList<Ruleset>();
+        if (SCA.timeVaryingEnabled && !SCA.spaceVaryingEnabled) {
+          SCA.timeVaryingEnabled = false;
+          SCA.spaceVaryingEnabled = true;
+          print("Time Varying Rulesets Disabled");
+          println(", Space Varying Rulesets Enabled");
+          SCA.ruleIndex = 0;
+          SCA.rulesetList.clear();
+
+          SCA.rulesetList.add(new Ruleset(DEFAULT_TURNING, DEFAULT_CROSSING)); //prepopulate space varying linked list with the zeroth generation's ruleset to avoid having an empty list
+          SCA.rulesetList.add(new Ruleset(DEFAULT_TURNING, DEFAULT_CROSSING));
+        } else {
+          SCA.timeVaryingEnabled = false;
+          SCA.spaceVaryingEnabled = false;
+          print("Space Varying Rulesets Disabled");
+          println(", Single Ruleset Mode Enabled");
+        }
       }
     }
 
-    if (key == 'q' && !SCA.timeRules.isEmpty()) {
-      print("\nCurrent Time-Varying Rules: ");
-      for (int i = 0; i<SCA.timeRules.size(); i++) {
-        print(" (" + SCA.timeRules.get(i).turningNum + ", " + SCA.timeRules.get(i).crossingNum + "), ");
+
+    if ( key == 'q'/* && !SCA.rulesetList.isEmpty()*/) {
+      print("\nCurrent Rule List Contents: ");
+      for (int i = 0; i<SCA.rulesetList.size(); i++) {
+        if (i < SCA.rulesetList.size()-1)
+          print(" (" + SCA.rulesetList.get(i).turningNum + ", " + SCA.rulesetList.get(i).crossingNum + "), ");
+        else
+          print(" (" + SCA.rulesetList.get(i).turningNum + ", " + SCA.rulesetList.get(i).crossingNum + ")");
       }
       println("");
     }
