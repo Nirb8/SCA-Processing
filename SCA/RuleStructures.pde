@@ -189,7 +189,7 @@ public class RuleDisplay {
     if (turningTextboxActive) {
       text("Turning: " + textbox, origCenterX + width/32, origCenterY-width/128);
       float cursorDx = textWidth("Turning: " + textbox);
-    
+
       if (cursorBlink < blinkInterval) {
         text("|", origCenterX + width/32 + cursorDx, origCenterY - width/128);
         cursorBlink++;
@@ -367,7 +367,26 @@ public class RuleDisplay {
 
     fill(0);
     textSize(20);
-    text("Crossing: " + currentRuleset.crossingNum, origCenterX + width/32, origCenterY-width/128);
+    if (crossingTextboxActive) {
+      text("Crossing: " + textbox, origCenterX + width/32, origCenterY - width/128);
+      float cursorDx = textWidth("Crossing: " + textbox);
+
+      if (cursorBlink < blinkInterval) {
+        text("|", origCenterX + width/32 + cursorDx, origCenterY - width/128);
+        cursorBlink++;
+      }
+
+      if (cursorBlink >= blinkInterval) {
+        cursorBlink++;
+        if (cursorBlink > 2*blinkInterval) {
+          cursorBlink = 0;
+        }
+      }
+    } else {
+      text("Crossing: " + currentRuleset.crossingNum, origCenterX + width/32, origCenterY-width/128);
+      cursorBlink = 0;
+    }
+
     fill(180);
     // strokeWeight(2.5);
 
