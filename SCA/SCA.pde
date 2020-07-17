@@ -430,7 +430,7 @@ void keyPressed() {
           SCA.timeVaryingEnabled = false;
           SCA.spaceVaryingEnabled = false;
           print("Space Varying Rulesets Disabled");
-          println(", Single Ruleset Mode Enabled");
+          println(", Single Ruleset Mode Disabled");
         }
       }
     }
