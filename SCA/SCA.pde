@@ -35,7 +35,7 @@ void setup() {
   println("x = " + zero.xPos);
   println("y = " + zero.yPos);
 
-  int contrast = 0;
+  int contrast = 0; //this is inverted, higher number means less contrast/less saturated colors and vice versa
 
   color red = color(255, contrast, contrast);
   color yellow = color(255, 255, contrast);
@@ -48,7 +48,8 @@ void setup() {
 
   color[] colorArray = new color[zero.numCells * 2];  //create array of colors to assign to each strand in zeroth generation
 
-  float lerpInterval = (zero.numCells * 2)/5.0;
+  float lerpInterval = (zero.numCells * 2)/5.0; // this is total number of cells * 2 to get total number of strands
+                                                // and dividing by 5.0 because there's 5 color interpotation intervals
 
   int lerpIndex = 0;
 
@@ -78,13 +79,14 @@ void setup() {
     //}
 
     lerpNum++;
-    if (lerpNum == 5) {
-      lerpNum = 0;
+    if (lerpNum == 5) { //this does some color scrambling stuff so that instead of a constant rainbow with similar colors grouped together,
+      lerpNum = 0;      //it instead uses a different color interpolation interval for every 5 strands and then increments the distance to interpolate
       lerpIndex++;
     }
   }
 
   int index = 0;
+  //takes the color array and assigns the colors to the zeroth generation's cells
   for (StrandedCell c : zero.cells) {
     c.setColors(colorArray[index], colorArray[index+1]);
     index+=2;
@@ -97,13 +99,13 @@ void setup() {
   // Ruleset testingSet = new Ruleset(324, 6);
   //println(calcNextCell("33","30", testingSet.turning, testingSet.crossing));
 
-  ruleGui.cellSize = width/24;
+  ruleGui.cellSize = width/24; //makes the sample grid cells within ruleGui slightly larger than the ones in the main SCA for visibility
 
   int centerX = 7*width/12;
 
   int centerY = height/6;
 
-  //bounding box
+  //create bounding box
   fill(200);
   rect(centerX, centerY, 7*width/18, 2*height/3);
   fill(255);
@@ -115,7 +117,9 @@ void setup() {
   int origX = centerX;
   int origY = centerY;
 
-  int count = 8;
+ // int count = 8; <-- used to check what number cells were at which positions
+ //assigns each cell in the display its position in the sample grid, 
+ //what it actually does is add all the coordinates to the front of the coordinateList in reverse order so that it ends up sorted from 0-8
   for (int i = 0; i<3; i++) {
     for (int j = 0; j<3; j++)
     {
@@ -123,7 +127,7 @@ void setup() {
       fill(0);
       //text(count, centerX, centerY);
       fill(255);
-      count--;
+     // count--;
       centerX = centerX + (width/12) + (width/36);
     }
     centerX = origX;
@@ -133,23 +137,22 @@ void setup() {
 
   //ruleGui.debugCoords();
 }
-int ruleTester = 0;
 
 void draw() {
 
-  if (SCA.clearNeeded)
-  {
+  if (SCA.clearNeeded){ //redraws automata
     fill(220);
     noStroke();
-    rect(0, 0, (width/2)-39, height);
+    rect(0, 0, (width/2), height); //clears entire left half of screen
     stroke(0);
     fill(255);
     SCA.clearNeeded = false;
   }
 
   fill(0);
-  SCA.drawRulesets(offset);
+  SCA.drawRulesets(offset); //draws the rulesets labels to the side
   fill(220);
+  
   if (ruleGui.turningActive) {
     ruleGui.drawTurningDisplay();
   } else {
@@ -375,7 +378,7 @@ void keyPressed() {
     if (key == 'c') {
       colorActive = !colorActive;
     }
-    
+
     if (key == 'l') {
       Ruleset updatedRuleset = new Ruleset(ruleGui.currentRuleset.turningNum, ruleGui.currentRuleset.crossingNum);
 
