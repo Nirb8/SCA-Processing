@@ -373,6 +373,7 @@ void keyPressed() {
       SCA.generationList.clear();
       SCA.generationList.add(zero);
       SCA.clearNeeded = true;
+      SCA.currentGeneration = 0;
       offset = 0;
     }
 
