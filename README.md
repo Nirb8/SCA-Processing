@@ -7,10 +7,10 @@ Click the cells in the bottom row to flip through the initial cell states, **spa
 
 For ruleset input, click the cells on the sample grid to the left to toggle their states, **m** or clicking on the tabs to swap between editing turning and crossing rules, and **l** to load the ruleset currently displayed in the sample grid into the bottom row of cells. Alternatively, click on the current active rule tab to type in a rule(only numbers will be accepted into the textbox). Press **enter/return** or click anywhere to confirm the rule selection. If nothing is entered, no changes will be made to the currently displayed ruleset.
 
-Press **t** to toggle time-varying rulesets(current status displayed in console temporarily).
+Press **t** to toggle through the ruleset modes(Single Ruleset, Time-Varying Rulesets, Space-Varying Rulesets), current status will be displayed in console
 
 Color is enabled by default, pressing **c** will toggle it on/off.
 
-When analyzing particiularly long braids, you can use the scrollwheel to scroll to a different part of the braid; hold **shift** to scroll faster.
+When analyzing particiularly long braids, you can use the scrollwheel to move to a different part of the braid; hold **shift** for increased scroll speed.
 
 Press **Esc** to quit the program.
