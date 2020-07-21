@@ -231,16 +231,16 @@ void keyPressed() {
       if (!SCA.timeVaryingEnabled && !SCA.spaceVaryingEnabled) {
         SCA.timeVaryingEnabled = true;
         SCA.spaceVaryingEnabled = false;
-        print("Single Ruleset Mode Disabled");
-        println(", Time Varying Rulesets Enabled");
+        println("\n\n\n");
+        println("Current Ruleset Status: Time-Varying");
         SCA.ruleIndex = 0;
         SCA.rulesetList.clear();
       } else {
         if (SCA.timeVaryingEnabled && !SCA.spaceVaryingEnabled) {
           SCA.timeVaryingEnabled = false;
           SCA.spaceVaryingEnabled = true;
-          print("Time Varying Rulesets Disabled");
-          println(", Space Varying Rulesets Enabled");
+          println("\n\n\n");
+          println("Current Ruleset Status: Space-Varying");
           SCA.ruleIndex = 0;
           SCA.rulesetList.clear();
 
@@ -249,8 +249,8 @@ void keyPressed() {
         } else {
           SCA.timeVaryingEnabled = false;
           SCA.spaceVaryingEnabled = false;
-          print("Space Varying Rulesets Disabled");
-          println(", Single Ruleset Mode Enabled");
+          println("\n\n\n");
+          println("Current Ruleset Status: Single Ruleset Only");
         }
       }
     }
