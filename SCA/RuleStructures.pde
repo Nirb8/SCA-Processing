@@ -496,4 +496,5 @@ public class RuleDisplay {
       println(i + ":  (" + coordinateList.get(i).x + ", " + coordinateList.get(i).y+ ")");
     }
   }
+  
 }

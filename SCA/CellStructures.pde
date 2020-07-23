@@ -10,6 +10,8 @@ public class StrandedCellAutomata {
   boolean clearNeeded;
   boolean timeVaryingEnabled;
   boolean spaceVaryingEnabled;
+  boolean spatialLoadingToLeft; //FOR SPACE VARYING RULESET ENTRY, determines if currently loading rulesets into left side or right side of braid
+  
   final int splitIndex = 5;
 
   LinkedList<Ruleset> rulesetList;
@@ -26,6 +28,7 @@ public class StrandedCellAutomata {
     clearNeeded = true;
     timeVaryingEnabled = false;
     spaceVaryingEnabled = false;
+    spatialLoadingToLeft = true;
     rulesetList = new LinkedList<Ruleset>();
   }
 
@@ -115,7 +118,8 @@ public class StrandedCellAutomata {
 
     fill(220);
     noStroke();
-    rect(x, 0, 150, height);
+    rect(x, 0, textWidth("1000: (324,140)"), height);
+    rect(generation.xPos - 4*generation.cellSize/3, 0, textWidth("1000: (324,140)"), height);
     stroke(0);
     fill(0);
     if (timeVaryingEnabled && !rulesetList.isEmpty()) {
@@ -133,6 +137,10 @@ public class StrandedCellAutomata {
           text(i + ": (" + generation.cells.get(0).ruleset.turningNum + ", " + generation.cells.get(0).ruleset.crossingNum + ")", x, y - (generation.cellSize * i));
         }
       } else {
+        //space varying labels
+        text("0: (" + rulesetList.get(0).turningNum + ", " + rulesetList.get(0).crossingNum + ")", generation.xPos-4*generation.cellSize/3, y);
+        
+        text("1: (" + rulesetList.get(1).turningNum + ", " + rulesetList.get(1).crossingNum + ")", x, y);
         
       }
     }

@@ -9,7 +9,7 @@ void mouseClicked() {
     if (ruleGui.textbox.length() != 0)
       newRule = Integer.parseInt(ruleGui.textbox);
 
-    println("attempting to write rule #" + newRule);
+    //  println("attempting to write rule #" + newRule);
     if (newRule > 511) {
       textboxErrorTimer = 169;
     } else {
@@ -30,7 +30,6 @@ void mouseClicked() {
           ruleGui.textbox = "";
         }
     }
-
     return;
   }
 
@@ -109,6 +108,23 @@ void mouseClicked() {
       crossingTextboxActive = true;
     }
   }
+
+  //for spatial rule input
+  if (SCA.spaceVaryingEnabled && offset == 0) {
+    int x = zero.xPos;
+    int y = 5*height/6;
+ 
+    int spacing = (zero.cellSize * zero.numCells) / 20;
+
+    if (mouseX > x + (3*spacing) && mouseX < x + (3*spacing) + (5*spacing) && mouseY > y+(spacing*3) && mouseY < y+(spacing*3) + spacing) {
+      SCA.spatialLoadingToLeft = true;
+      //println("set left");
+    } 
+    if(mouseX > x + (12*spacing) && mouseX < x + (12*spacing) + (5*spacing) && mouseY > y+(spacing*3) && mouseY < y+(spacing*3) + spacing) {
+      SCA.spatialLoadingToLeft = false;
+      //println("set right");
+    }
+  }
 }
 
 void mouseWheel(MouseEvent event) {
@@ -131,6 +147,8 @@ void mouseWheel(MouseEvent event) {
 
 void keyPressed() {
 
+  
+  
   //textbox input, overrides all other keystrokes
   if (turningTextboxActive || crossingTextboxActive) {
     if (key == BACKSPACE) {
@@ -214,10 +232,10 @@ void keyPressed() {
           zero.updateCellRulesets(SCA.rulesetList.get(0));
         } else {
           if (SCA.spaceVaryingEnabled) {
-            SCA.rulesetList.addFirst(updatedRuleset);
-            if (SCA.rulesetList.size() > 2) {
-              SCA.rulesetList.removeLast();
-            }
+            if(SCA.spatialLoadingToLeft)
+            SCA.rulesetList.set(0,updatedRuleset);
+            else
+            SCA.rulesetList.set(1,updatedRuleset);
           }
         }
       }

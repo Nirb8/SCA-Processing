@@ -9,11 +9,13 @@ boolean turningTextboxActive = false;
 
 boolean crossingTextboxActive = false;
 
+
+
 int textboxErrorTimer = 0;
 
 int offset = 0;
 
-StrandedCellGeneration zero = new StrandedCellGeneration((width*16)/37, (height/6) + 10*90, 10);
+StrandedCellGeneration zero = new StrandedCellGeneration((width*16)/37, (5*height/6), 10);
 
 StrandedCellAutomata SCA = new StrandedCellAutomata(zero);
 
@@ -175,6 +177,40 @@ void draw() {
       rect(7 * width/12, 6.8 * height/8, textWidth("Error: Rule specified does not match bounds (0 - 511)"), 48);
       fill(255);
       stroke(0);
+    }
+  }
+
+ int x = zero.xPos;
+    int y = 5*height/6;
+int spacing = (zero.cellSize * zero.numCells) / 20;
+  if (SCA.spaceVaryingEnabled && offset == 0) {
+    stroke(0);
+
+    if (SCA.spatialLoadingToLeft) {
+      //draw active left tab
+      //  println("draw left active");
+      fill(255, 234, 0);
+      rect(x + 3*spacing, y+spacing*3, 5*spacing, spacing);
+      //draw inactive right tab
+      fill(255);
+      rect(x + 12*spacing, y+spacing*3, 5*spacing, spacing);
+    } else {
+      //draw inactive left tab
+      fill(255);
+      rect(x + 3*spacing, y+spacing*3, 5*spacing, spacing);
+      //draw active right tab
+      //   println("draw right active");
+      fill(255, 234, 0);
+      rect(x + 12*spacing, y+spacing*3, 5*spacing, spacing);
+    }
+  }
+  else
+  {
+    if(offset > -20){
+    fill(220);
+    stroke(220);
+    rect(x + 3*spacing, y+spacing*3, 5*spacing, spacing);
+    rect(x + 12*spacing, y+spacing*3, 5*spacing, spacing);
     }
   }
 }
