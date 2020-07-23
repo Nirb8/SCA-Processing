@@ -1,13 +1,17 @@
 # SCA-Processing
-A Processing 3 implementation of the Stranded Cellular Automaton, with optional time varying and space varying rulesets.
+A Processing 3 implementation of the Stranded Cellular Automaton(SCA), with optional time varying and space varying rulesets.
 
 Processing 3 is needed to run the program, you can get it here at https://processing.org/download/
 
 Click the cells in the bottom row to flip through the initial cell states, **spacebar** to generate new rows of cells, and **r** to reset the automata(resetting automata will also reset scroll status). 
 
-For ruleset input, click the cells on the sample grid to the left to toggle their states, **m** or clicking on the tabs to swap between editing turning and crossing rules, and **l** to load the ruleset currently displayed in the sample grid into the bottom row of cells. Alternatively, click on the current active rule tab to type in a rule(only numbers will be accepted into the textbox). Press **enter/return** or click anywhere to confirm the rule selection. If nothing is entered, no changes will be made to the currently displayed ruleset.
+Press **t** to toggle through the ruleset modes(Single Ruleset Only, Time-Varying Rulesets, Space-Varying Rulesets), the current status will be displayed in the console. (temporary)
 
-Press **t** to toggle through the ruleset modes(Single Ruleset, Time-Varying Rulesets, Space-Varying Rulesets), current status will be displayed in console
+Ruleset Input: Click the cells on the sample grid to the right to toggle their states, use **m** or click on the tabs to swap between editing turning or crossing rules, and use **l** to load ruleset into the SCA. Alternatively, you can click on the currently active tab to bring up a textbox that you may enter a rule number into; press **enter/return** or click anywhere to save your changes. If nothing is entered in the textbox when it is saved, no changes will be made to the rule. 
+
+Time-Varying Ruleset Input: Hitting **l** will append the ruleset currently displayed in the sample grid to the end of the time-varying ruleset list.
+
+Space-Varying Ruleset Input: The tabs at the bottom of the SCA indicate which side rulesets will be loaded into. Click on the tabs to select the one you want to load rulesets into, and press **l** to load the sample grid ruleset into that side of the SCA. 
 
 Color is enabled by default, pressing **c** will toggle it on/off.
 
