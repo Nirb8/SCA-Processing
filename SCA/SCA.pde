@@ -1,4 +1,4 @@
-final int SIZE_CONSTANT = 90;  //<>//
+int SIZE_CONSTANT = 90;  //<>//
 
 final int DEFAULT_TURNING = 324;
 final int DEFAULT_CROSSING = 140;
@@ -23,8 +23,24 @@ RuleDisplay ruleGui = new RuleDisplay();
 
 
 void setup() {
-  fullScreen(2);
+  fullScreen();
   //println("resolution is " + width + "x" + height);
+
+  //very primitive scaling patch that allows the program to run at minimum 1920 x 1080
+  if (width < 2400) {
+    SIZE_CONSTANT = 75;
+    zero = new StrandedCellGeneration((width*16)/37, (5*height/6), 10);
+    SCA = new StrandedCellAutomata(zero);
+    ruleGui = new RuleDisplay();
+  }
+  if (width < 1920) {
+    SIZE_CONSTANT = 50;
+    zero = new StrandedCellGeneration((width*16)/37, (5*height/6), 10);
+    SCA = new StrandedCellAutomata(zero);
+    ruleGui = new RuleDisplay();
+  }
+
+
   cursor();
   background(220);
   stroke(0);
@@ -138,6 +154,12 @@ void setup() {
   centerY = origY;
 
   //ruleGui.debugCoords();
+  
+  int statusX = 7*width/12;
+  int statusY = height/16;
+  fill(0);
+  textSize(24);
+  text("Current Mode: Single Ruleset Only", statusX, statusY+40);
 }
 
 void draw() {
@@ -150,6 +172,8 @@ void draw() {
     fill(255);
     SCA.clearNeeded = false;
   }
+  
+  
 
   fill(0);
   SCA.drawRulesets(offset); //draws the rulesets labels to the side
@@ -163,26 +187,49 @@ void draw() {
 
   for (StrandedCellGeneration g : SCA.generationList) {
     g.drawGeneration(colorActive, offset);
-  }
 
-  if (textboxErrorTimer > 0) {
-    textSize(24);
-    fill(#9E0A0A);
-    text("Error: Rule specified does not match bounds (0 - 511)", 7 * width/12, 7 * height/8);
-    fill(0);
-    textboxErrorTimer--;
-    if (textboxErrorTimer == 0) {
-      noStroke();
-      fill(220);
-      rect(7 * width/12, 6.8 * height/8, textWidth("Error: Rule specified does not match bounds (0 - 511)"), 48);
-      fill(255);
+    //draw divider line
+    if (SCA.spaceVaryingEnabled) {
+      int mid = (g.numCells /2);
+      int x = g.xPos + (mid * g.cellSize);
+      int y = g.yPos - offset;
+
+      //stroke(255, 234, 0);
       stroke(0);
+      strokeWeight(10);
+      if (g.generationNumber % 2 == 0) {
+        //draw 
+        // *****
+        //     *
+        //     *
+        //     *
+        line(x, y, x, y+g.cellSize);
+        line(x, y, x - g.cellSize/2, y);
+      } else {
+        //draw
+        //*****
+        //*
+        //*
+        //*
+        line(x, y, x, y+g.cellSize);
+        line(x, y, x + g.cellSize/2, y);
+      }
+      stroke(0);
+      strokeWeight(2.5);
     }
   }
 
- int x = zero.xPos;
-    int y = 5*height/6;
-int spacing = (zero.cellSize * zero.numCells) / 20;
+  if (ruleGui.msgbox.messageTimer > 0) {
+    ruleGui.msgbox.messageTimer--;
+  } 
+  if (ruleGui.msgbox.messageTimer <= 0) {
+    ruleGui.msgbox.messageTimer = 0;
+    ruleGui.msgbox.clear();
+  }
+
+  int x = zero.xPos;
+  int y = 5*height/6;
+  int spacing = (zero.cellSize * zero.numCells) / 20;
   if (SCA.spaceVaryingEnabled && offset == 0) {
     stroke(0);
 
@@ -203,14 +250,13 @@ int spacing = (zero.cellSize * zero.numCells) / 20;
       fill(255, 234, 0);
       rect(x + 12*spacing, y+spacing*3, 5*spacing, spacing);
     }
-  }
-  else
+  } else
   {
-    if(offset > -20){
-    fill(220);
-    stroke(220);
-    rect(x + 3*spacing, y+spacing*3, 5*spacing, spacing);
-    rect(x + 12*spacing, y+spacing*3, 5*spacing, spacing);
+    if (offset > -20) {
+      fill(220);
+      stroke(220);
+      rect(x + 3*spacing, y+spacing*3, 5*spacing, spacing);
+      rect(x + 12*spacing, y+spacing*3, 5*spacing, spacing);
     }
   }
 }

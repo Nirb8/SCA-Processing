@@ -147,6 +147,8 @@ public class RuleDisplay {
   String textbox;
   int cursorBlink;
   final int blinkInterval = 30;
+  
+  MessageBox msgbox;
 
   /**
    *  Default constructor, display shows turning rules by default
@@ -161,6 +163,7 @@ public class RuleDisplay {
 
     textbox = "";
     cursorBlink = 0;
+    msgbox = new MessageBox();
   }
   /**
    *  Draws an active turning tab along with the sample cells
@@ -495,6 +498,38 @@ public class RuleDisplay {
     for (int i = 0; i<coordinateList.size(); i++) {
       println(i + ":  (" + coordinateList.get(i).x + ", " + coordinateList.get(i).y+ ")");
     }
+  }
+  
+}
+
+
+public class MessageBox{
+  String message;
+  int messageTimer;
+  
+  public MessageBox(){
+    message = "";
+    messageTimer = 0;
+  }
+  
+  public void clear(){
+    noStroke();
+      fill(220);
+      rect(7 * width/12, 6.8 * height/8, textWidth(message)*1.5, 48);
+      fill(255);
+      stroke(0);
+  }
+  
+  public void drawMessage(color c, String msg, int time){
+    clear();
+    messageTimer = time;
+    message = msg;
+    textSize(24);
+    fill(c);
+    stroke(c);
+    text(msg, 7 * width/12, 7 * height/8);
+    stroke(0);
+    fill(255);
   }
   
 }

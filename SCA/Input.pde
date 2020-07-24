@@ -11,7 +11,7 @@ void mouseClicked() {
 
     //  println("attempting to write rule #" + newRule);
     if (newRule > 511) {
-      textboxErrorTimer = 169;
+      ruleGui.msgbox.drawMessage(#9E0A0A, "Error: Rule specified does not match bounds (0 - 511)", 169);
     } else {
       if (newRule == -1) {
         ruleGui.textbox = "";
@@ -170,7 +170,7 @@ void keyPressed() {
 
       //println("attempting to write rule #" + newRule);
       if (newRule > 511) {
-        textboxErrorTimer = 169; //adjust for a longer/shorter error message display time
+        ruleGui.msgbox.drawMessage(#9E0A0A, "Error: Rule specified does not match bounds (0 - 511)", 169);
       } else {
         //default case when unable to parse textbox(since it was empty), exits textbox mode without modifying any of the rules
         if (newRule == -1) {
@@ -223,19 +223,28 @@ void keyPressed() {
     if (key == 'l') {
       Ruleset updatedRuleset = new Ruleset(ruleGui.currentRuleset.turningNum, ruleGui.currentRuleset.crossingNum);
 
-      if (!SCA.timeVaryingEnabled && !SCA.spaceVaryingEnabled)
+      
+
+      if (!SCA.timeVaryingEnabled && !SCA.spaceVaryingEnabled){
         zero.updateCellRulesets(updatedRuleset);
+        ruleGui.msgbox.drawMessage(#228C22, "Sucessfully loaded ruleset (" + updatedRuleset.turningNum + ", " + updatedRuleset.crossingNum + ")", 169);
+      }
       else
       {
         if (SCA.timeVaryingEnabled) {
+          ruleGui.msgbox.drawMessage(#228C22, "Sucessfully loaded ruleset (" + updatedRuleset.turningNum + ", " + updatedRuleset.crossingNum + ") into index " + SCA.rulesetList.size() + " of ruleset list", 169);
           SCA.rulesetList.addLast(updatedRuleset);
           zero.updateCellRulesets(SCA.rulesetList.get(0));
         } else {
           if (SCA.spaceVaryingEnabled) {
-            if(SCA.spatialLoadingToLeft)
+            if(SCA.spatialLoadingToLeft){
             SCA.rulesetList.set(0,updatedRuleset);
-            else
+            ruleGui.msgbox.drawMessage(#228C22, "Sucessfully loaded ruleset (" + updatedRuleset.turningNum + ", " + updatedRuleset.crossingNum + ") to lefthand side", 169);
+            }
+            else{
             SCA.rulesetList.set(1,updatedRuleset);
+            ruleGui.msgbox.drawMessage(#228C22, "Sucessfully loaded ruleset (" + updatedRuleset.turningNum + ", " + updatedRuleset.crossingNum + ") to righthand side", 169);
+            }
           }
         }
       }
@@ -268,10 +277,32 @@ void keyPressed() {
           SCA.timeVaryingEnabled = false;
           SCA.spaceVaryingEnabled = false;
           println("\n\n\n");
+          SCA.clearNeeded = true; //for cleaning up the zipper line created by space-varying rules
           println("Current Ruleset Status: Single Ruleset Only");
         }
       }
+    int statusX = 7*width/12;
+    int statusY = height/16;
+    
+    fill(220);
+    noStroke();
+    rect(statusX, statusY, 2*width/12, 48);
+    textSize(24);
+    stroke(0);
+    fill(0);
+  if (!SCA.spaceVaryingEnabled && !SCA.timeVaryingEnabled) {
+    text("Current Mode: Single Ruleset Only", statusX, statusY+40);
+  } else {
+    if (!SCA.spaceVaryingEnabled && SCA.timeVaryingEnabled) {
+      text("Current Mode: Time-Varying", statusX, statusY+40);
+    } else {
+      if (SCA.spaceVaryingEnabled && !SCA.timeVaryingEnabled) {
+      text("Current Mode: Space-Varying", statusX, statusY+40);
+      }
     }
+  }
+
+}
 
 
     if ( key == 'q'/* && !SCA.rulesetList.isEmpty()*/) {
