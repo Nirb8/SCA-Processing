@@ -134,7 +134,7 @@ void mouseWheel(MouseEvent event) {
   if (keyPressed == true)
     if (key == CODED)
       if (keyCode == SHIFT) {
-        offset += e * 45;
+        offset += e * 69;
       }
 
   offset += e * 15; //default scroll speed booster
@@ -147,8 +147,6 @@ void mouseWheel(MouseEvent event) {
 
 void keyPressed() {
 
-  
-  
   //textbox input, overrides all other keystrokes
   if (turningTextboxActive || crossingTextboxActive) {
     if (key == BACKSPACE) {
@@ -193,11 +191,52 @@ void keyPressed() {
           }
       }
     }
+    
+    if(key == TAB){
+      //attempt to write current textbox input to ruleset
+      int newRule = -1;
+      if (ruleGui.textbox.length() != 0)
+        newRule = Integer.parseInt(ruleGui.textbox); //reads the string in the textbox into a decimal number
+
+      //println("attempting to write rule #" + newRule);
+      if (newRule > 511) {
+        ruleGui.msgbox.drawMessage(#9E0A0A, "Error: Rule specified does not match bounds (0 - 511)", 169);
+      } else {
+        //default case when unable to parse textbox(since it was empty), exits textbox mode without modifying any of the rules
+        if (newRule == -1) {
+          ruleGui.textbox = "";
+          turningTextboxActive = false;
+          crossingTextboxActive = false;
+        } else
+          //modifies turning rule and keeps crossing rule constant
+          if (turningTextboxActive) {
+            int currentCrossing = ruleGui.currentRuleset.crossingNum;
+            ruleGui.currentRuleset.setRules(newRule, currentCrossing);
+            turningTextboxActive = false; 
+            ruleGui.textbox = ""; //clear textbox buffer
+            crossingTextboxActive = true;
+            ruleGui.turningActive = false;
+          } else {
+            //does the opposite of the above code
+            int currentTurning = ruleGui.currentRuleset.turningNum;
+            ruleGui.currentRuleset.setRules(currentTurning, newRule);
+            crossingTextboxActive = false;
+            ruleGui.textbox = "";
+            turningTextboxActive = true;
+            ruleGui.turningActive = true;
+          }
+      }
+    }
+    
   } else {
 
 
     if (key == ' ') {
       SCA.growthCycle();
+    }
+    if(key == 'g'){
+      for(int i = 0;i<5;i++)
+        SCA.growthCycle();
     }
 
     // print debug information
