@@ -297,16 +297,16 @@ void keyPressed() {
       if (!SCA.timeVaryingEnabled && !SCA.spaceVaryingEnabled) {
         SCA.timeVaryingEnabled = true;
         SCA.spaceVaryingEnabled = false;
-        println("\n\n\n");
-        println("Current Ruleset Status: Time-Varying");
+        //println("\n\n\n");
+        //println("Current Ruleset Status: Time-Varying");
         SCA.ruleIndex = 0;
         SCA.rulesetList.clear();
       } else {
         if (SCA.timeVaryingEnabled && !SCA.spaceVaryingEnabled) {
           SCA.timeVaryingEnabled = false;
           SCA.spaceVaryingEnabled = true;
-          println("\n\n\n");
-          println("Current Ruleset Status: Space-Varying");
+          //println("\n\n\n");
+          //println("Current Ruleset Status: Space-Varying");
           SCA.ruleIndex = 0;
           SCA.rulesetList.clear();
 
@@ -315,9 +315,9 @@ void keyPressed() {
         } else {
           SCA.timeVaryingEnabled = false;
           SCA.spaceVaryingEnabled = false;
-          println("\n\n\n");
+          //println("\n\n\n");
           SCA.clearNeeded = true; //for cleaning up the zipper line created by space-varying rules
-          println("Current Ruleset Status: Single Ruleset Only");
+          //println("Current Ruleset Status: Single Ruleset Only");
         }
       }
     int statusX = 7*width/12;
@@ -325,7 +325,7 @@ void keyPressed() {
     
     fill(220);
     noStroke();
-    rect(statusX, statusY, 2*width/12, 48);
+    rect(statusX, statusY, 3*width/12, 48);
     textSize(24);
     stroke(0);
     fill(0);
