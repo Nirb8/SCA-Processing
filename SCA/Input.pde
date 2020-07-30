@@ -300,7 +300,7 @@ void keyPressed() {
         //println("\n\n\n");
         //println("Current Ruleset Status: Time-Varying");
         SCA.ruleIndex = 0;
-        SCA.rulesetList.clear();
+        SCA.rulesetList = new LinkedList<Ruleset>();
       } else {
         if (SCA.timeVaryingEnabled && !SCA.spaceVaryingEnabled) {
           SCA.timeVaryingEnabled = false;
