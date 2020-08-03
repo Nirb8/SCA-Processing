@@ -21,7 +21,6 @@ StrandedCellAutomata SCA = new StrandedCellAutomata(zero);
 
 RuleDisplay ruleGui = new RuleDisplay();
 
-
 void setup() {
   fullScreen();
   //println("resolution is " + width + "x" + height);
@@ -50,8 +49,8 @@ void setup() {
   zero.xPos = (width*4)/37;
   zero.yPos = (5*height/6);
 
-  println("x = " + zero.xPos);
-  println("y = " + zero.yPos);
+  //println("x = " + zero.xPos); 
+  //println("y = " + zero.yPos);
 
   int contrast = 0; //this is inverted, higher number means less contrast/less saturated colors and vice versa
 
@@ -75,7 +74,7 @@ void setup() {
   for (int i = 0; i<zero.numCells*2; i++) {
     switch(lerpNum) {
     case 3:
-      colorArray[i] = lerpColor(red, yellow, lerpIndex/(lerpInterval));
+      colorArray[i] = lerpColor(red, yellow, lerpIndex/(lerpInterval)); //lerpColor() finds a color between the two given colors
       break;
     case 4:
       colorArray[i] = lerpColor(yellow, green, lerpIndex/(lerpInterval));
@@ -90,7 +89,8 @@ void setup() {
       colorArray[i] = lerpColor(darkBlue, violet, lerpIndex/(lerpInterval));
       break;
     }
-    //lerpIndex++;
+    //for rainbow coloring
+    //lerpIndex++;  
     //if (lerpIndex == lerpInterval) {
     //  lerpIndex = 0;
     //  lerpNum++;
@@ -172,8 +172,6 @@ void draw() {
     fill(255);
     SCA.clearNeeded = false;
   }
-  
-  
 
   fill(0);
   SCA.drawRulesets(offset); //draws the rulesets labels to the side
@@ -188,17 +186,16 @@ void draw() {
   for (StrandedCellGeneration g : SCA.generationList) {
     g.drawGeneration(colorActive, offset);
 
-    //draw divider line
+    //draw zipper divider line, bolded
     if (SCA.spaceVaryingEnabled) {
       int mid = (g.numCells /2);
       int x = g.xPos + (mid * g.cellSize);
       int y = g.yPos - offset;
 
-      //stroke(255, 234, 0);
       stroke(0);
-      strokeWeight(10);
+      strokeWeight(10); //bold
       if (g.generationNumber % 2 == 0) {
-        //draw 
+        //draw below figure
         // *****
         //     *
         //     *
@@ -206,7 +203,7 @@ void draw() {
         line(x, y, x, y+g.cellSize);
         line(x, y, x - g.cellSize/2, y);
       } else {
-        //draw
+        //draw below figure
         //*****
         //*
         //*
@@ -219,9 +216,11 @@ void draw() {
     }
   }
 
+  //decays current message if active
   if (ruleGui.msgbox.messageTimer > 0) {
     ruleGui.msgbox.messageTimer--;
   } 
+  //clears message if timer has expired
   if (ruleGui.msgbox.messageTimer <= 0) {
     ruleGui.msgbox.messageTimer = 0;
     ruleGui.msgbox.clear();
@@ -230,6 +229,8 @@ void draw() {
   int x = zero.xPos;
   int y = 5*height/6;
   int spacing = (zero.cellSize * zero.numCells) / 20;
+  
+  //draw space-varying buttons at the bottom of the SCA, hide them if any scrolling has occured
   if (SCA.spaceVaryingEnabled && offset == 0) {
     stroke(0);
 
@@ -252,6 +253,7 @@ void draw() {
     }
   } else
   {
+    //will only clear the button space until the rest of the grid has scrolled to that area to avoid clearning the grid
     if (offset > -20) {
       fill(220);
       stroke(220);
@@ -303,7 +305,7 @@ public void drawStrands(int xPos, int yPos, CellStatus status, int cellSize) {
 }
 
 /*
-*  Method to draw a *colored* stranded cell, given the coordinates of its upper left corner, what type of cell it is, its size, and colors of its left and right input strands
+ *  Method to draw a *colored* stranded cell, given the coordinates of its upper left corner, what type of cell it is, its size, and colors of its left and right input strands
  * 
  */
 public void drawStrands(int xPos, int yPos, CellStatus status, int cellSize, color leftInput, color rightInput) {
